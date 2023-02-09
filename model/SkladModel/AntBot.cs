@@ -173,12 +173,12 @@ namespace SkladModel
 
         [XmlIgnore]
         public List<(int x, int y, TimeSpan from, TimeSpan to)> reserved = new List<(int x, int y, TimeSpan from, TimeSpan to)>();
+
+        [XmlIgnore]
         internal List<AbstractObject> objects;
 
-
-
-
-
+        [XmlIgnore]
+        public CommandList escapePath;
 
         private int nextShift(double speed)
         {

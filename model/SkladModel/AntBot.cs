@@ -52,6 +52,9 @@ namespace SkladModel
         public int RotateOnUnload = 0;
         public int MoveOnLoad = 0;
         public int MoveOnUnload = 0;
+        public int MoveOnCharging = 0;
+        public int RotateOnCharging = 0;
+        public double WaitOnCharging = 0;
 
         [XmlIgnore]
         public double metric
@@ -86,6 +89,9 @@ namespace SkladModel
             cl.RotateOnUnload = RotateOnUnload;
             cl.MoveOnLoad = MoveOnLoad;
             cl.MoveOnUnload = MoveOnUnload;
+            cl.MoveOnCharging = MoveOnCharging;
+            cl.RotateOnCharging = RotateOnCharging;
+            cl.WaitOnCharging = WaitOnCharging;
             return cl;
         }
 
@@ -133,6 +139,10 @@ namespace SkladModel
             RotateOnUnload += abstractEvent.RotateOnUnload;
             MoveOnLoad += abstractEvent.MoveOnLoad;
             MoveOnUnload += abstractEvent.MoveOnUnload;
+            MoveOnCharging += abstractEvent.MoveOnCharging;
+            RotateOnCharging += abstractEvent.RotateOnCharging;
+            WaitOnCharging += abstractEvent.WaitOnCharging;
+
             abstractEvent.antBot = antBot;
             debugAnt = antState.ShalowClone();
             return true;

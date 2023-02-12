@@ -20,7 +20,9 @@ namespace TestSklad2
         {
             return arg.lastTime.TotalSeconds + 
                 (1 - arg.antState.charge/arg.antBot.sklad.skladConfig.unitChargeValue) * 
-                arg.antBot.sklad.skladConfig.unitChargeTime + arg.RotateOnLoad * 4 + arg.MoveOnLoad * 5 + arg.MoveOnUnload * 0.33;
+                arg.antBot.sklad.skladConfig.unitChargeTime + 
+                arg.RotateOnLoad * 4 + arg.MoveOnLoad * 5 + arg.MoveOnUnload * 0.33 +
+                arg.RotateOnCharging * 2 + arg.MoveOnCharging;
         }
 
 
@@ -29,7 +31,7 @@ namespace TestSklad2
             SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config.xml", false);
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
-            skladWrapper.AddAnts(24);
+            skladWrapper.AddAnts(16);
             new MoveSort(skladWrapper).Run();
             //new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");

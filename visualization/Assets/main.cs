@@ -11,6 +11,7 @@ using System;
 using Object = UnityEngine.Object;
 using Unity.VisualScripting;
 using ControlModel;
+using TMPro;
 
 public class main : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class main : MonoBehaviour
 
     public Transform[] brick;
     public Transform AntBotTransform;
+    public TextMeshProUGUI timerTMP;
     Dictionary<string, AntBotUnity> antsBot = new Dictionary<string, AntBotUnity>();
     private SkladWrapper skladWrapper;
     Sklad sklad;
@@ -29,7 +31,7 @@ public class main : MonoBehaviour
     AntStateChange asc;
     public Transform panel;
     AntStateChange[] logs;
-    TimeSpan time_shift = TimeSpan.FromMinutes(0);
+    TimeSpan time_shift = TimeSpan.FromMinutes(201);
 
     // Start is called before the first frame update
     void Start()
@@ -66,6 +68,7 @@ public class main : MonoBehaviour
     void Update()
     {
         TimeSpan current = DateTime.Now - startTime;
+        timerTMP.text = string.Format("{0:dd\\.hh\\:mm\\:ss}", current);
         if (current.TotalSeconds > asc.lastUpdated) 
         {
             do
@@ -82,11 +85,20 @@ public class main : MonoBehaviour
                 else
                 {
                     antsBot[asc.uid].antStateChange = asc;
+                    antsBot[asc.uid].SetPosition();
                 }
 
                 if (asc.lastUpdated > time_shift.TotalSeconds) {
                     if (asc.command == "Rotate")
                     {
+                        if (asc.isXDirection)
+                        {
+                            transform.rotation = Quaternion.Euler(0, 0, 90);
+                        }
+                        else
+                        {
+                            transform.rotation = Quaternion.Euler(0, 0, 0);
+                        }
                         StartCoroutine(antsBot[asc.uid].RotateMe(new Vector3(0, 0, 90), 4));
                     }
                     if (asc.command == "Load")
@@ -95,7 +107,8 @@ public class main : MonoBehaviour
                     }
                     if (asc.command == "Unload")
                     {
-                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, Color.white));
+                        Color32 color = new Color32((byte)(255 * antsBot[asc.uid].antStateChange.charge / 7200), 0, 0, 255);
+                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, color));
                     }
                 }
 

@@ -10,6 +10,9 @@ namespace SkladModel
         public int RotateOnUnload = 0;
         public int MoveOnLoad = 0;
         public int MoveOnUnload = 0;
+        public int MoveOnCharging = 0;
+        public int RotateOnCharging = 0;
+        public double WaitOnCharging = 0;
 
 
         public abstract TimeSpan getStartTime();

@@ -15,6 +15,7 @@ public class AntBotUnity : MonoBehaviour
     public void SetPosition()
     {
         SetPosition(main.getPosition(antStateChange.xCoordinate, antStateChange.yCoordinate));
+ 
         
     }
 

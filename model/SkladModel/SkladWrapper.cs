@@ -210,6 +210,7 @@ namespace SkladModel
 
                 if (!ant.isHaveReservation())
                 {
+                    ant.isHaveReservation();
                     throw new CheckStateException();
                 }
 

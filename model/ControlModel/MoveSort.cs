@@ -36,6 +36,7 @@ namespace ControlModel
         }
         public void Run(TimeSpan maxModelTime)
         {
+            StringBuilder text_log = new StringBuilder();
             TimeSpan timeProgress = TimeSpan.Zero;
             DateTime now = DateTime.Now;
             int numberFreeAnt = 0; 
@@ -44,6 +45,7 @@ namespace ControlModel
                 if (timeProgress < skladWrapper.updatedTime)
                 {
                     Console.WriteLine($"{skladWrapper.updatedTime}  {DateTime.Now - now}  {skladWrapper.GetSklad().deliveryCount}");
+                    text_log.AppendLine($"{skladWrapper.updatedTime} {skladWrapper.GetSklad().deliveryCount}");
                     timeProgress += TimeSpan.FromMinutes(1);
                 }
 
@@ -88,6 +90,7 @@ namespace ControlModel
                 }
                 numberFreeAnt = skladWrapper.GetFreeAnts().Count;
             }
+            File.WriteAllText("TimeUnloadLog.csv", text_log.ToString());
         }
 
         private void TryRunToFreePoint(List<AntBot> antBots)
@@ -345,6 +348,7 @@ namespace ControlModel
             while (true)
             {
                 NextStep(antBot);
+                /*
                 if (point.isXDirection)
                 {
                     if (state[point.x][point.y].xMinTime != TimeSpan.MaxValue)
@@ -361,8 +365,27 @@ namespace ControlModel
                         break;
                     }
                 }
+                */
                 if (graph.Count() == 0)
+                {
+                    if (point.isXDirection)
+                    {
+                        if (state[point.x][point.y].xMinTime != TimeSpan.MaxValue)
+                        {
+                            cList = state[point.x][point.y].xCommans;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (state[point.x][point.y].yMinTime != TimeSpan.MaxValue)
+                        {
+                            cList = state[point.x][point.y].yCommans;
+                            break;
+                        }
+                    }
                     return (false, null);
+                }
             }
             return (true, cList);
         }

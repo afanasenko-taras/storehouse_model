@@ -1,19 +1,26 @@
 ﻿using AbstractModel;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SkladModel
 {
     public abstract class AntBotAbstractEvent : AbstractEvent
     {
         public AntBot antBot;
-        public int RotateOnLoad = 0;
-        public int RotateOnUnload = 0;
-        public int MoveOnLoad = 0;
-        public int MoveOnUnload = 0;
-        public int MoveOnCharging = 0;
-        public int RotateOnCharging = 0;
-        public double WaitOnCharging = 0;
-
+        public Dictionary<int, int> RotateCount = new Dictionary<int, int>();
+        public Dictionary<int, int> MoveCount = new Dictionary<int, int>();
+        public Dictionary<int, double> WaitCount = new Dictionary<int, double>();
+        
+        public AntBotAbstractEvent()
+        {
+            for (int sp = 0; sp < 8; sp++)
+            {
+                RotateCount.Add((int)sp, 0);
+                MoveCount.Add((int)sp, 0);
+                WaitCount.Add((int)sp, 0);
+            }
+        }
 
         public abstract TimeSpan getStartTime();
         public abstract TimeSpan getEndTime();
@@ -22,6 +29,7 @@ namespace SkladModel
         public abstract AntBotAbstractEvent Clone();
 
         public virtual void CalculatePenalty() { }
+
 
     }
 

@@ -51,19 +51,16 @@ namespace SkladModel
 
         public override void CalculatePenalty()
         {
-            MoveOnLoad = 0;
-            MoveOnUnload = 0;
-            MoveOnCharging = 0;
+            for (int sp = 0; sp < 8; sp++)
+            {
+                MoveCount[sp] = 0;
+            }
 
             for (int shift = 0; shift < numCoord; shift++)
             {
+                
                 var coord = antBot.getShift(shift);
-                if (antBot.sklad.skladLayout[coord.y][coord.x] == 2 || antBot.sklad.skladLayout[coord.y][coord.x] == 5)
-                    MoveOnLoad += 1;
-                if (antBot.sklad.skladLayout[coord.y][coord.x] == 3 || antBot.sklad.skladLayout[coord.y][coord.x] == 6)
-                    MoveOnUnload += 1;
-                if (antBot.sklad.skladLayout[coord.y][coord.x] == 4 || antBot.sklad.skladLayout[coord.y][coord.x] == 7)
-                    MoveOnCharging += 1;
+                MoveCount[antBot.sklad.skladLayout[coord.y][coord.x]]++;
             }
         }
         public override void ReserveRoom()

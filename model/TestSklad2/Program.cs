@@ -18,11 +18,16 @@ namespace TestSklad2
     {
         private static double timeEnergyMetric(CommandList arg)
         {
-            return arg.lastTime.TotalSeconds + 
-                (1 - arg.antState.charge/arg.antBot.sklad.skladConfig.unitChargeValue) * 
-                arg.antBot.sklad.skladConfig.unitChargeTime + 
-                arg.RotateOnLoad * 4 + arg.MoveOnLoad * 5 + arg.MoveOnUnload * 0.33 +
-                arg.RotateOnCharging * 2 + arg.MoveOnCharging;
+            return arg.lastTime.TotalSeconds +
+                (1 - arg.antState.charge / arg.antBot.sklad.skladConfig.unitChargeValue) *
+                arg.antBot.sklad.skladConfig.unitChargeTime +
+            
+                (arg.RotateCount[(int)SquareProperty.LoadX] + arg.RotateCount[(int)SquareProperty.LoadY]) * 4 +
+                (arg.MoveCount[(int)SquareProperty.LoadX] + arg.MoveCount[(int)SquareProperty.LoadY]) * 5 +
+                (arg.MoveCount[(int)SquareProperty.UnLoadX] + arg.MoveCount[(int)SquareProperty.UnLoadY]) * 0.33 +
+                (arg.RotateCount[(int)SquareProperty.ChargeX] + arg.RotateCount[(int)SquareProperty.ChargeY]) * 2 +
+                (arg.MoveCount[(int)SquareProperty.ChargeX] + arg.MoveCount[(int)SquareProperty.ChargeY]);
+           
         }
 
 
@@ -32,8 +37,8 @@ namespace TestSklad2
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
             skladWrapper.AddAnts(16);
+            //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(240));
             new MoveSort(skladWrapper).Run();
-            //new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));

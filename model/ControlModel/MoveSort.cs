@@ -348,7 +348,7 @@ namespace ControlModel
             while (true)
             {
                 NextStep(antBot);
-                /*
+                
                 if (point.isXDirection)
                 {
                     if (state[point.x][point.y].xMinTime != TimeSpan.MaxValue)
@@ -365,7 +365,7 @@ namespace ControlModel
                         break;
                     }
                 }
-                */
+                
                 if (graph.Count() == 0)
                 {
                     if (point.isXDirection)

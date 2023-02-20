@@ -36,12 +36,7 @@ namespace SkladModel
         {
             int x = antBot.xCord;
             int y = antBot.yCord;
-            if (antBot.sklad.skladLayout[y][x] == 2 || antBot.sklad.skladLayout[y][x] == 5)
-                RotateOnLoad = 1;
-            if (antBot.sklad.skladLayout[y][x] == 3 || antBot.sklad.skladLayout[y][x] == 6)
-                RotateOnUnload = 1;
-            if (antBot.sklad.skladLayout[y][x] == 4 || antBot.sklad.skladLayout[y][x] == 7)
-                RotateOnCharging = 1;
+            RotateCount[antBot.sklad.skladLayout[y][x]] = 1;
         }
 
         public override void runEvent(List<AbstractObject> objects, TimeSpan timeSpan)

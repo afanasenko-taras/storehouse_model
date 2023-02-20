@@ -39,15 +39,41 @@ namespace SkladModel
         Right = 3
     }
 
+    public enum SquareProperty : int
+    {
+        Border = 0,
+        Free = 1,
+        LoadX = 2,
+        UnLoadX = 3,
+        ChargeX = 4,
+        LoadY = 5,
+        UnLoadY = 6, 
+        ChargeY = 7
+    }
+
     public class CommandList
     {
-        public CommandList() { }
+        public CommandList() 
+        {
+            for (int sp = 0; sp < 8; sp++)
+            {
+                RotateCount.Add((int)sp, 0);
+                MoveCount.Add((int)sp, 0);
+                WaitCount.Add((int)sp, 0);
+            }
+        }
 
         public AntBot antBot;
         public AntBot antState;
         public AntBot debugAnt;
         public TimeSpan lastTime;
 
+        public Dictionary<int, int> RotateCount = new Dictionary<int, int>();
+        public Dictionary<int, int> MoveCount = new Dictionary<int, int>();
+        public Dictionary<double, int> WaitCount = new Dictionary<double, int>();
+
+
+        /*
         public int RotateOnLoad = 0;
         public int RotateOnUnload = 0;
         public int MoveOnLoad = 0;
@@ -55,6 +81,7 @@ namespace SkladModel
         public int MoveOnCharging = 0;
         public int RotateOnCharging = 0;
         public double WaitOnCharging = 0;
+        */
 
         [XmlIgnore]
         public double metric
@@ -73,6 +100,12 @@ namespace SkladModel
             debugAnt = antBot.ShalowClone();
             antState.commandList = new CommandList();
             lastTime = antBot.lastUpdated;
+            for (int sp = 0; sp < 8; sp++)
+            {
+                RotateCount.Add((int)sp, 0);
+                MoveCount.Add((int)sp, 0);
+                WaitCount.Add((int)sp, 0);
+            }
         }
 
         public CommandList Clone()
@@ -85,13 +118,12 @@ namespace SkladModel
                 cl.commands.Add((c.Key, ev));
             });
             cl.lastTime= lastTime;
-            cl.RotateOnLoad = RotateOnLoad;
-            cl.RotateOnUnload = RotateOnUnload;
-            cl.MoveOnLoad = MoveOnLoad;
-            cl.MoveOnUnload = MoveOnUnload;
-            cl.MoveOnCharging = MoveOnCharging;
-            cl.RotateOnCharging = RotateOnCharging;
-            cl.WaitOnCharging = WaitOnCharging;
+            for(int sp = 0; sp<8; sp++)
+            { 
+                cl.RotateCount[(int)sp] = RotateCount[(int)sp];
+                cl.MoveCount[(int)sp] = MoveCount[(int)sp];
+                cl.WaitCount[(int)sp] = WaitCount[(int)sp];
+            }
             return cl;
         }
 
@@ -129,20 +161,19 @@ namespace SkladModel
             }
             commands.Add((lastTime, abstractEvent));
             antState.commandList.commands.Add((lastTime, abstractEvent));
-            antState.commandList.RotateOnLoad += abstractEvent.RotateOnLoad;
-            antState.commandList.RotateOnUnload += abstractEvent.RotateOnUnload;
+            for(int sp = 0; sp<8; sp++)
+            {
+                antState.commandList.RotateCount[sp] += abstractEvent.RotateCount[sp];
+            }
             if (!antState.isClone)
                 throw new ExecutionEngineException();
             abstractEvent.runEvent(null, abstractEvent.getEndTime());
             lastTime = abstractEvent.getEndTime();
-            RotateOnLoad += abstractEvent.RotateOnLoad;
-            RotateOnUnload += abstractEvent.RotateOnUnload;
-            MoveOnLoad += abstractEvent.MoveOnLoad;
-            MoveOnUnload += abstractEvent.MoveOnUnload;
-            MoveOnCharging += abstractEvent.MoveOnCharging;
-            RotateOnCharging += abstractEvent.RotateOnCharging;
-            WaitOnCharging += abstractEvent.WaitOnCharging;
-
+            for (int sp = 0; sp < 8; sp++)
+            {
+                RotateCount[sp] += abstractEvent.RotateCount[sp];
+                MoveCount[sp] += abstractEvent.MoveCount[sp];
+            }
             abstractEvent.antBot = antBot;
             debugAnt = antState.ShalowClone();
             return true;

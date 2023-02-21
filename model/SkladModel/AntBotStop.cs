@@ -33,7 +33,7 @@ namespace SkladModel
             if (isLongStop)
                 return antBot.sklad.squaresIsBusy.GetPosibleReserve(x, y, getStartTime());
             else
-                return getStartTime() + TimeSpan.FromSeconds(antBot.sklad.skladConfig.unitStopTime);
+                return getStartTime() + TimeSpan.FromSeconds(antBot.unitStopTime);
         }
        
 
@@ -50,7 +50,7 @@ namespace SkladModel
             antBot.yCoordinate = antBot.yCord;
             antBot.xSpeed = 0;
             antBot.ySpeed = 0;
-            antBot.charge -= antBot.sklad.skladConfig.unitStopEnergy;
+            antBot.charge -= antBot.unitStopEnergy;
             antBot.state = AntBotState.Wait;
             antBot.RemoveFirstCommand(timeSpan);
             antBot.isFree = (antBot.commandList.commands.Count == 0);

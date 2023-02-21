@@ -10,13 +10,15 @@ namespace SkladModel
         int x;
         int y;
         bool isDebug;
+        SkladConfig skladConfig;
 
-        public override AntBotAbstractEvent Clone() => new AntBotCreate(x, y, isDebug);
-        public AntBotCreate(int x, int y, bool isDebug)
+        public override AntBotAbstractEvent Clone() => new AntBotCreate(x, y, isDebug, skladConfig);
+        public AntBotCreate(int x, int y, bool isDebug, SkladConfig skladConfig)
         {
             this.x = x;
             this.y = y;
             this.isDebug = isDebug; 
+            this.skladConfig = skladConfig;
         }
 
         public override bool CheckReservation()
@@ -42,6 +44,23 @@ namespace SkladModel
         public override void runEvent(List<AbstractObject> objects, TimeSpan timeSpan)
         {
             AntBot antBot = new AntBot();
+
+            antBot.unitSpeed = skladConfig.unitSpeed; 
+            antBot.unitAccelerationTime = skladConfig.unitAccelerationTime; 
+            antBot.unitStopTime = skladConfig.unitStopTime; 
+            antBot.unitRotateTime = skladConfig.unitRotateTime; 
+            antBot.unitAccelerationEnergy = skladConfig.unitAccelerationEnergy; 
+            antBot.unitStopEnergy = skladConfig.unitStopEnergy;
+            antBot.unitMoveEnergy = skladConfig.unitMoveEnergy;
+            antBot.unitRotateEnergy = skladConfig.unitRotateEnergy; 
+            antBot.loadTime = skladConfig.loadTime;  
+            antBot.unloadTime = skladConfig.unloadTime; 
+            antBot.unitLoadEnergy = skladConfig.unitLoadEnergy;
+            antBot.unitUnloadEnergy = skladConfig.unitUnloadEnergy;
+            antBot.unitWaitEnergy = skladConfig.unitWaitEnergy;
+            antBot.unitChargeTime = skladConfig.unitChargeTime;
+            antBot.unitChargeValue = skladConfig.unitChargeValue;
+
             antBot.isDebug = isDebug;
             antBot.sklad = (Sklad)objects.First(x=> x is Sklad);
             antBot.xCoordinate = x;
@@ -51,7 +70,7 @@ namespace SkladModel
             antBot.ySpeed = 0;
             antBot.isLoaded = false;
             antBot.isFree = true;
-            antBot.charge = antBot.sklad.skladConfig.unitChargeValue;
+            antBot.charge = antBot.unitChargeValue;
             antBot.targetXCoordinate = x;
             antBot.targetYCoordinate = y;
             antBot.state = AntBotState.Wait;

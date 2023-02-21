@@ -23,18 +23,18 @@ namespace SkladModel
         public override bool CheckReservation()
         {
             bool check = antBot.CheckRoom(getStartTime(), getStartTime() +
-                TimeSpan.FromSeconds(1.0 / antBot.sklad.skladConfig.unitSpeed));
+                TimeSpan.FromSeconds(1.0 / antBot.unitSpeed));
             return check;
         }
 
         public override TimeSpan getStartTime() => antBot.lastUpdated;
         public override TimeSpan getEndTime() => antBot.lastUpdated +
-            TimeSpan.FromSeconds(antBot.sklad.skladConfig.unitAccelerationTime);
+            TimeSpan.FromSeconds(antBot.unitAccelerationTime);
 
         public override void ReserveRoom()
         { 
             antBot.ReserveRoom(getStartTime(), getStartTime() +
-                TimeSpan.FromSeconds(1.0 / antBot.sklad.skladConfig.unitSpeed));
+                TimeSpan.FromSeconds(1.0 / antBot.unitSpeed));
         }
 
         public override void runEvent(List<AbstractObject> objects, TimeSpan timeSpan)
@@ -45,10 +45,10 @@ namespace SkladModel
                 throw new AntBotNotPosibleMovement();
             if (!antBot.isXDirection & (direction == Direction.Left || direction == Direction.Right))
                 throw new AntBotNotPosibleMovement();
-            if (antBot.sklad.skladConfig.unitAccelerationTime != 0)
+            if (antBot.unitAccelerationTime != 0)
                 throw new NotImplementedException();
             antBot.setSpeedByDirection(direction);
-            antBot.charge -= antBot.sklad.skladConfig.unitAccelerationEnergy;
+            antBot.charge -= antBot.unitAccelerationEnergy;
             antBot.isFree = false;
             antBot.waitTime = getEndTime();
             antBot.state = AntBotState.Accelerating;

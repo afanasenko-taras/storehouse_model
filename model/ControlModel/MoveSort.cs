@@ -441,15 +441,15 @@ namespace ControlModel
                 var waitSt = commandList.Clone();
                 if (dist == 0) 
                     if (!waitSt.antState.CheckRoom(waitSt.lastTime, waitSt.lastTime +
-                    TimeSpan.FromSeconds(1.0 / waitSt.antBot.sklad.skladConfig.unitSpeed))) 
+                    TimeSpan.FromSeconds(1.0 / waitSt.antBot.unitSpeed))) 
                     {                 
                         continue;
                     }
                 waitSt.antState.setSpeedByDirection(dir);
-                waitSt.antState.xCoordinate += waitSt.antState.xSpeed * (dist + 1) / antBot.sklad.skladConfig.unitSpeed;
-                waitSt.antState.yCoordinate += waitSt.antState.ySpeed * (dist + 1) / antBot.sklad.skladConfig.unitSpeed;
+                waitSt.antState.xCoordinate += waitSt.antState.xSpeed * (dist + 1) / antBot.unitSpeed;
+                waitSt.antState.yCoordinate += waitSt.antState.ySpeed * (dist + 1) / antBot.unitSpeed;
                 var near = antBot.sklad.squaresIsBusy.GetNearestReserve(waitSt.antState.xCord,
-                    waitSt.antState.yCord, waitSt.lastTime + TimeSpan.FromSeconds((double)dist/ antBot.sklad.skladConfig.unitSpeed));
+                    waitSt.antState.yCord, waitSt.lastTime + TimeSpan.FromSeconds((double)dist/ antBot.unitSpeed));
                 
                 if (near != TimeSpan.MaxValue)
                 {

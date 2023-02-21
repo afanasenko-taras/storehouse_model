@@ -22,7 +22,7 @@ namespace SkladModel
         public override TimeSpan getStartTime() => antBot.lastUpdated;
         public override TimeSpan getEndTime()
         {
-            return getStartTime() + TimeSpan.FromSeconds(antBot.sklad.skladConfig.unloadTime);
+            return getStartTime() + TimeSpan.FromSeconds(antBot.unloadTime);
         }
 
         public override void ReserveRoom()
@@ -41,7 +41,7 @@ namespace SkladModel
             antBot.targetXCoordinate = unloadPoint.x;
             antBot.targetYCoordinate = unloadPoint.y;
             antBot.targetDirection = unloadPoint.Direction;
-            antBot.charge -= antBot.sklad.skladConfig.unitUnloadEnergy;
+            antBot.charge -= antBot.unitUnloadEnergy;
             antBot.state = AntBotState.Unloading;
             antBot.isLoaded = false;
             antBot.RemoveFirstCommand(timeSpan);

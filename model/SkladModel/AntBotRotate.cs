@@ -21,7 +21,7 @@ namespace SkladModel
         public override TimeSpan getStartTime() => antBot.lastUpdated;
         public override TimeSpan getEndTime()
         {
-            return getStartTime() + TimeSpan.FromSeconds(antBot.sklad.skladConfig.unitRotateTime);
+            return getStartTime() + TimeSpan.FromSeconds(antBot.unitRotateTime);
         }
 
         public override void ReserveRoom()
@@ -46,7 +46,7 @@ namespace SkladModel
             antBot.xSpeed = 0;
             antBot.ySpeed = 0;
             antBot.waitTime = getEndTime();
-            antBot.charge -= antBot.sklad.skladConfig.unitRotateEnergy;
+            antBot.charge -= antBot.unitRotateEnergy;
             antBot.state = AntBotState.Rotate;
             antBot.isXDirection = !antBot.isXDirection;
             antBot.isFree = false;

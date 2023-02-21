@@ -19,8 +19,8 @@ namespace TestSklad2
         private static double timeEnergyMetric(CommandList arg)
         {
             return arg.lastTime.TotalSeconds +
-                (1 - arg.antState.charge / arg.antBot.sklad.skladConfig.unitChargeValue) *
-                arg.antBot.sklad.skladConfig.unitChargeTime +
+                (1 - arg.antState.charge / arg.antBot.unitChargeValue) *
+                arg.antBot.unitChargeTime +
             
                 (arg.RotateCount[(int)SquareProperty.LoadX] + arg.RotateCount[(int)SquareProperty.LoadY]) * 4 +
                 (arg.MoveCount[(int)SquareProperty.LoadX] + arg.MoveCount[(int)SquareProperty.LoadY]) * 5 +

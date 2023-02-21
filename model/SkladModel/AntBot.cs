@@ -73,16 +73,6 @@ namespace SkladModel
         public Dictionary<double, int> WaitCount = new Dictionary<double, int>();
 
 
-        /*
-        public int RotateOnLoad = 0;
-        public int RotateOnUnload = 0;
-        public int MoveOnLoad = 0;
-        public int MoveOnUnload = 0;
-        public int MoveOnCharging = 0;
-        public int RotateOnCharging = 0;
-        public double WaitOnCharging = 0;
-        */
-
         [XmlIgnore]
         public double metric
         {
@@ -205,6 +195,38 @@ namespace SkladModel
         public AntBotState state;
         public Sklad sklad;
         public SkladLogger skladLogger;
+
+        [XmlIgnore]
+        public double unitSpeed; // Скорость робота
+        [XmlIgnore]
+        public double unitAccelerationTime; // Время набора скорости юнита от 0 до UnitSpeed
+        [XmlIgnore]
+        public double unitStopTime; // Время остановки юнита с UnitSpeed до 0
+        [XmlIgnore]
+        public double unitRotateTime; //Время разворота юнита на 90 градусов
+        [XmlIgnore]
+        public double unitAccelerationEnergy; //Стоимость разгона
+        [XmlIgnore]
+        public double unitStopEnergy; // Энергия на остановку
+        [XmlIgnore]
+        public double unitMoveEnergy; // Энергия на 1 секунду движения
+        [XmlIgnore]
+        public double unitRotateEnergy; // Энергия на разворот
+        [XmlIgnore]
+        public double loadTime;  // Время погрузки
+        [XmlIgnore]
+        public double unloadTime; // 
+        [XmlIgnore]
+        public double unitLoadEnergy;
+        [XmlIgnore]
+        public double unitUnloadEnergy;
+        [XmlIgnore]
+        public double unitWaitEnergy;
+        [XmlIgnore]
+        public double unitChargeTime;
+        [XmlIgnore]
+        public double unitChargeValue;
+
         [XmlIgnore]
         public bool isDebug;
         [XmlIgnore]
@@ -266,7 +288,7 @@ namespace SkladModel
                 case AntBotState.UnCharged:
                     return (TimeSpan.MaxValue, null);
                 case AntBotState.Wait:
-                    timeUncharged = lastUpdated + TimeSpan.FromSeconds(charge / sklad.skladConfig.unitWaitEnergy);
+                    timeUncharged = lastUpdated + TimeSpan.FromSeconds(charge / unitWaitEnergy);
                     if (commandList.commands.Count> 0)
                     {
                         var task = commandList.commands.First();
@@ -301,7 +323,7 @@ namespace SkladModel
                 case AntBotState.Work:
                     if (charge <= 0)
                         return (lastUpdated, new AntBotUnCharging(this));
-                    timeUncharged = lastUpdated + TimeSpan.FromSeconds(charge / sklad.skladConfig.unitWaitEnergy);
+                    timeUncharged = lastUpdated + TimeSpan.FromSeconds(charge / unitWaitEnergy);
                     return (waitTime, new AntBotEndTask(this));
             }
             return (TimeSpan.MaxValue, null);
@@ -322,10 +344,10 @@ namespace SkladModel
             switch (state)
             {
                 case AntBotState.Wait:
-                    charge -= sklad.skladConfig.unitWaitEnergy * second;
+                    charge -= unitWaitEnergy * second;
                     break;
                 case AntBotState.Move:
-                    charge -= sklad.skladConfig.unitMoveEnergy * second;
+                    charge -= unitMoveEnergy * second;
                     break;
             }
             lastUpdated = timeSpan;
@@ -343,7 +365,7 @@ namespace SkladModel
         {
 
             TimeSpan startInterval = lastUpdated;
-            TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(1.0 / sklad.skladConfig.unitSpeed);
+            TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(1.0 / unitSpeed);
             if (sklad.squaresIsBusy.CheckIsBusy(xCord, yCord, startInterval, endInterval, uid))
                 return 0;
 
@@ -368,8 +390,8 @@ namespace SkladModel
         {
             var coord = getShift(shift);
 
-            TimeSpan startInterval = lastUpdated + TimeSpan.FromSeconds((delta + shift) / sklad.skladConfig.unitSpeed);
-            TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(2.0 / sklad.skladConfig.unitSpeed);
+            TimeSpan startInterval = lastUpdated + TimeSpan.FromSeconds((delta + shift) / unitSpeed);
+            TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(2.0 / unitSpeed);
             return !sklad.squaresIsBusy.CheckIsBusy(coord.x, coord.y, startInterval, endInterval, uid);
         }
 
@@ -416,6 +438,23 @@ namespace SkladModel
             _antBot.isXDirection = this.isXDirection;
             _antBot.reserved= this.reserved;
             _antBot.isDebug= this.isDebug;
+
+            _antBot.unitSpeed = this.unitSpeed;
+            _antBot.unitAccelerationTime = this.unitAccelerationTime;
+            _antBot.unitStopTime = this.unitStopTime;
+            _antBot.unitRotateTime = this.unitRotateTime;
+            _antBot.unitAccelerationEnergy = this.unitAccelerationEnergy;
+            _antBot.unitStopEnergy = this.unitStopEnergy;
+            _antBot.unitMoveEnergy = this.unitMoveEnergy;
+            _antBot.unitRotateEnergy = this.unitRotateEnergy;
+            _antBot.loadTime = this.loadTime;
+            _antBot.unloadTime = this.unloadTime;
+            _antBot.unitLoadEnergy = this.unitLoadEnergy;
+            _antBot.unitUnloadEnergy = this.unitUnloadEnergy;
+            _antBot.unitWaitEnergy = this.unitWaitEnergy;
+            _antBot.unitChargeTime = this.unitChargeTime;
+            _antBot.unitChargeValue = this.unitChargeValue;
+
             return _antBot;
         }
 
@@ -444,8 +483,8 @@ namespace SkladModel
         public TimeSpan getTimeForFullCharge()
         {
             return TimeSpan.FromSeconds(
-                (sklad.skladConfig.unitChargeValue - charge) /
-                sklad.skladConfig.unitChargeValue * sklad.skladConfig.unitChargeTime);
+                (unitChargeValue - charge) /
+                unitChargeValue * unitChargeTime);
         }
 
         internal bool isHaveReservation()
@@ -456,13 +495,13 @@ namespace SkladModel
         public void setSpeedByDirection(Direction direction)
         {
             if (direction == Direction.Left)
-                xSpeed = -sklad.skladConfig.unitSpeed;
+                xSpeed = -unitSpeed;
             else if (direction == Direction.Right)
-                xSpeed = sklad.skladConfig.unitSpeed;
+                xSpeed = unitSpeed;
             else if (direction == Direction.Up)
-                ySpeed = -sklad.skladConfig.unitSpeed;
+                ySpeed = -unitSpeed;
             else if (direction == Direction.Down)
-                ySpeed = sklad.skladConfig.unitSpeed;
+                ySpeed = unitSpeed;
         }
     }
 

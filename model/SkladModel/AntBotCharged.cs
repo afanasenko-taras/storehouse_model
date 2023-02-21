@@ -31,7 +31,7 @@ namespace SkladModel
         public override void runEvent(List<AbstractObject> objects, TimeSpan timeSpan)
         {
             antBot.state = AntBotState.Wait;
-            antBot.charge = antBot.sklad.skladConfig.unitChargeValue;
+            antBot.charge = antBot.unitChargeValue;
             antBot.isFree = (antBot.commandList.commands.Count == 0);
             if (antBot.skladLogger != null)
             {

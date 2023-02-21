@@ -27,7 +27,6 @@ namespace SkladModel
 
         public int deliveryCount = 0;
 
-        public SkladConfig skladConfig;
         [XmlIgnore]
         public SquaresIsBusy squaresIsBusy;
 
@@ -38,7 +37,6 @@ namespace SkladModel
 
         public Sklad(SkladConfig skladConfig)
         {
-            this.skladConfig = skladConfig;
             int counter = 0;
             foreach (string line in System.IO.File.ReadLines(skladConfig.skladLayout))
             {

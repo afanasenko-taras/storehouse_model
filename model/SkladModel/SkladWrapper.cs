@@ -44,7 +44,7 @@ namespace SkladModel
             foreach (string line in File.ReadLines(skladConfig.antBotLayout))
             {
                 string[] numbers = line.Split(',');
-                AddEvent(TimeSpan.Zero, new AntBotCreate(int.Parse(numbers[0]), int.Parse(numbers[1]), isDebug));
+                AddEvent(TimeSpan.Zero, new AntBotCreate(int.Parse(numbers[0]), int.Parse(numbers[1]), isDebug, skladConfig));
                 count++;
                 if (count == numRobots)
                     break;
@@ -166,9 +166,9 @@ namespace SkladModel
             {
                 var coord = antBot.getShift(shift);
 
-                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.unitSpeed);
                 double wait = shift < numCoord - 1 ? 2.0 : 1.0;
-                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.unitSpeed);
                 Debug($"Reserve x:{coord.x}, y:{coord.y} from {startInterval} to {endInterval}");
                 antBot.ReserveRoom(coord.x, coord.y, startInterval, endInterval);
             }

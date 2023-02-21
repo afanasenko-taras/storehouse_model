@@ -34,9 +34,9 @@ namespace SkladModel
             for (int shift = 0; shift < numCoord; shift++)
             {
                 var coord = antBot.getShift(shift);
-                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.unitSpeed);
                 double wait = shift < numCoord - 1 ? 2.0 : 1.0;
-                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.unitSpeed);
                 if (!antBot.CheckRoom(coord.x, coord.y, startInterval, endInterval))
                 {
                     antBot.CheckRoom(coord.x, coord.y, startInterval, endInterval);
@@ -47,7 +47,7 @@ namespace SkladModel
         }
 
         public override TimeSpan getStartTime() => antBot.lastUpdated;
-        public override TimeSpan getEndTime() => getStartTime() + TimeSpan.FromSeconds(numCoord / antBot.sklad.skladConfig.unitSpeed);
+        public override TimeSpan getEndTime() => getStartTime() + TimeSpan.FromSeconds(numCoord / antBot.unitSpeed);
 
         public override void CalculatePenalty()
         {
@@ -70,9 +70,9 @@ namespace SkladModel
             {
                 var coord = antBot.getShift(shift);
 
-                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.unitSpeed);
                 double wait = shift < numCoord - 1 ? 2.0 : 1.0;
-                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.sklad.skladConfig.unitSpeed);
+                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.unitSpeed);
                 antBot.ReserveRoom(coord.x, coord.y, startInterval, endInterval);
             }
         }

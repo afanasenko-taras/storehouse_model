@@ -37,8 +37,8 @@ namespace TestSklad2
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
             skladWrapper.AddAnts(16);
-            //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(240));
-            new MoveSort(skladWrapper).Run();
+            new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
+            //new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));

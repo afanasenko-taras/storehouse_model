@@ -32,7 +32,12 @@ namespace SkladModel
         {
             antBot.state = AntBotState.Wait;
             antBot.charge = antBot.unitChargeValue;
+            antBot.waitTime = TimeSpan.Zero;
             antBot.isFree = (antBot.commandList.commands.Count == 0);
+            if (!antBot.isFree)
+            {
+                Console.WriteLine("Alarm");
+            }
             if (antBot.skladLogger != null)
             {
                 antBot.skladLogger.AddLog(antBot, "Charged");

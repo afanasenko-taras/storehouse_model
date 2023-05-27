@@ -34,11 +34,12 @@ namespace TestSklad2
         static void Main(string[] args)
         {            
             SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config.xml", false);
+            //skladWrapper.isDebug = true;
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
-            skladWrapper.AddAnts(16);
-            new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
-            //new MoveSort(skladWrapper).Run();
+            skladWrapper.AddAnts(8);
+            //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
+            new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));

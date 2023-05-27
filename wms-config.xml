@@ -17,7 +17,7 @@
   <unitUnloadEnergy>0.05</unitUnloadEnergy>
   <unitWaitEnergy>0.005</unitWaitEnergy>
   <unitChargeTime>720</unitChargeTime>
-  <unitChargeValue>7200</unitChargeValue>
+  <unitChargeValue>2200</unitChargeValue>
   <unitCount>1</unitCount>
   <skladLayout>..\..\..\..\..\W15.csv</skladLayout>
   <antBotLayout>..\..\..\..\..\wms-robots.csv</antBotLayout>

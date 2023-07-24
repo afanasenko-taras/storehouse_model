@@ -51,7 +51,7 @@ namespace SkladModel
 
         public override void CalculatePenalty()
         {
-            for (int sp = 0; sp < 8; sp++)
+            for (int sp = 0; sp < 10; sp++)
             {
                 MoveCount[sp] = 0;
             }

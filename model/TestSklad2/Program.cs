@@ -37,7 +37,7 @@ namespace TestSklad2
             //skladWrapper.isDebug = true;
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
-            skladWrapper.AddAnts(8);
+            skladWrapper.AddAnts(20);
             //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
             new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");

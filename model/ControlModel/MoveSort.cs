@@ -42,15 +42,6 @@ namespace ControlModel
             int numberFreeAnt = 0; 
             while (skladWrapper.Next())
             {
-                /*
-                var ant_s = skladWrapper.GetAllAnts();
-                ant_s.ForEach(ant => {
-                    if ((ant.commandList.commands.Count == 0) && (!ant.isFree)  && (ant.state != AntBotState.Wait))
-                    {
-                        Console.WriteLine("Alarm!");
-                    }
-                });
-                */
 
                 if (timeProgress < skladWrapper.updatedTime)
                 {
@@ -160,23 +151,27 @@ namespace ControlModel
                 (AntBot bot, CommandList cList, TimeSpan minTime) minBotPath = (null, null, TimeSpan.MaxValue);
                 freeAnts.ForEach(freeAnt =>
                 {
+                    
+
+
                     if (freeAnt.commandList.commands.Count>0)
                     {
                         throw new CheckStateException();
                     }
-                    freeAnt.sklad.source.ForEach(source =>
-                    {
-                        var gp = getPath(freeAnt, source);
-                        if (gp.isPathExist)
+                    if (freeAnt.charge > freeAnt.unitChargeValue * 0.1)
+                        freeAnt.sklad.source.ForEach(source =>
                         {
-                            if (gp.cList.lastTime < minBotPath.minTime)
+                            var gp = getPath(freeAnt, source);
+                            if (gp.isPathExist)
                             {
-                                minBotPath.minTime = gp.cList.lastTime;
-                                minBotPath.bot = freeAnt;
-                                minBotPath.cList = gp.cList;
+                                if (gp.cList.lastTime < minBotPath.minTime)
+                                {
+                                    minBotPath.minTime = gp.cList.lastTime;
+                                    minBotPath.bot = freeAnt;
+                                    minBotPath.cList = gp.cList;
+                                }
                             }
-                        }
-                    });
+                        });
                 });
                 if (minBotPath.minTime < TimeSpan.MaxValue)
                 {
@@ -576,7 +571,7 @@ namespace ControlModel
                 reservePath(ant, escapePath.cList);
             } else
             {
-                Console.WriteLine("No exits");
+                Console.WriteLine("AHTUNG");
                 Console.ReadLine();
             }
         }

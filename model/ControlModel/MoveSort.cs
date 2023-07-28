@@ -24,7 +24,6 @@ namespace ControlModel
     public class MoveSort
     {
         SkladWrapper skladWrapper;
-        TimeSpan maxTime = TimeSpan.MaxValue;
 
         public MoveSort(SkladWrapper skladWrapper) { 
             this.skladWrapper = skladWrapper;

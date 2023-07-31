@@ -19,6 +19,27 @@ namespace SkladModel
             }
         }
 
+        public SortedDictionary<TimeSpan, TimeBusy> getReservation(int x, int y)
+        {
+            return squareIsBusy[x][y];
+        }
+
+
+        public Dictionary<int, Dictionary<int, double>> getEmptyDesk()
+        {
+            Dictionary<int, Dictionary<int, double>> ed = new Dictionary<int, Dictionary<int, double>>();
+            foreach (var x in squareIsBusy.Keys)
+            {
+                ed.Add(x, new Dictionary<int, double>());
+                foreach(var y in squareIsBusy[x].Keys)
+                {
+                    ed[x].Add(y, 0);
+                }
+            }
+            return ed;
+        }
+
+
         private Dictionary<int, Dictionary<int, SortedDictionary<TimeSpan, TimeBusy>>> squareIsBusy = new Dictionary<int, Dictionary<int, SortedDictionary<TimeSpan, TimeBusy>>>();
         private string skladUid;
         public SquaresIsBusy(Dictionary<int, Dictionary<int, int>> skladLayout, string uid) 

@@ -51,12 +51,13 @@ namespace SkladModel
                     break;
             }
         }
-
-        public SkladWrapper(string fileSkladConfig, bool isDebug = false)
+        bool isStrongReserv;
+        public SkladWrapper(string fileSkladConfig, bool isDebug = false, bool isStrongReserv = true)
         {
             this.isDebug = isDebug;
             byte[] fileSkladConfigByte = File.ReadAllBytes(fileSkladConfig);
             skladConfig = Helper.DeserializeXML<SkladConfig>(fileSkladConfigByte);
+            this.isStrongReserv = isStrongReserv;
         }
 
         public List<AntBot> GetAllAnts()
@@ -98,7 +99,7 @@ namespace SkladModel
 
 
 
-        public void Move(AntBot antBot, Direction direction, int numCoord = 0, double time = 0)
+        public void Move(AntBot antBot, Direction direction, int numCoord = 0, double time = 0, bool isNeedReserve = true)
         {
             Debug($"Macro - Move {direction}");
             if (antBot.xSpeed > 0 || antBot.ySpeed > 0)
@@ -118,15 +119,14 @@ namespace SkladModel
             if (antBot.isNeedRotateForDirection(direction))
             {
                 antBot.commandList.AddCommand(new AntBotRotate(antBot));
+                antBot.commandList.AddCommand(new AntBotWait(antBot, TimeSpan.Zero));
             }
 
-
-            antBot.commandList.AddCommand(new AntBootAccelerate(antBot, direction));
+            antBot.commandList.AddCommand(new AntBootAccelerate(antBot, direction, isNeedReserve));
             antBot.commandList.AddCommand(new AntBotMove(antBot, numCoord));
             antBot.commandList.AddCommand(new AntBotStop(antBot));
 
             Debug($"End Macro - Move {direction}");
-
         }
 
 
@@ -208,11 +208,13 @@ namespace SkladModel
                 {
                     //throw new CheckStateException();
                 }
-
-                if (!ant.isHaveReservation())
+                if (this.isStrongReserv)
                 {
-                    ant.isHaveReservation();
-                    throw new CheckStateException();
+                    if (!ant.isHaveReservation())
+                    {
+                        ant.isHaveReservation();
+                        throw new CheckStateException();
+                    }
                 }
 
 

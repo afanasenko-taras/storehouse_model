@@ -8,20 +8,24 @@ namespace SkladModel
     public class AntBootAccelerate : AntBotAbstractEvent
     {
         Direction direction;
+        bool isNeedReserve;
 
         public override AntBotAbstractEvent Clone()
         {
             return new AntBootAccelerate(antBot, direction);
         }
         public AntBootAccelerate() { }
-        public AntBootAccelerate(AntBot antBot, Direction direction) 
+        public AntBootAccelerate(AntBot antBot, Direction direction, bool isNeedReserve = true) 
         {
             this.antBot = antBot;
             this.direction = direction;
+            this.isNeedReserve = isNeedReserve;
         }
 
         public override bool CheckReservation()
         {
+            if (!isNeedReserve)
+                return true;
             bool check = antBot.CheckRoom(getStartTime(), getStartTime() +
                 TimeSpan.FromSeconds(1.0 / antBot.unitSpeed));
             return check;
@@ -32,7 +36,9 @@ namespace SkladModel
             TimeSpan.FromSeconds(antBot.unitAccelerationTime);
 
         public override void ReserveRoom()
-        { 
+        {
+            if (!isNeedReserve)
+                return;
             antBot.ReserveRoom(getStartTime(), getStartTime() +
                 TimeSpan.FromSeconds(1.0 / antBot.unitSpeed));
         }

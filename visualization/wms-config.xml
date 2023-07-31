@@ -3,7 +3,7 @@
   <zoneSize>1</zoneSize>
   <unitSize>1</unitSize>
   <safeUnitSize>1</safeUnitSize>
-  <unitSpeed>3</unitSpeed>
+  <unitSpeed>1</unitSpeed>
   <unitAccelerationTime>0</unitAccelerationTime>
   <unitStopTime>0</unitStopTime>
   <unitRotateTime>4</unitRotateTime>

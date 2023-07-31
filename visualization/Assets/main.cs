@@ -37,10 +37,10 @@ public class main : MonoBehaviour
     void Start()
     {
         System.Random rnd = new System.Random(DateTime.Now.Millisecond);
-        SkladWrapper skladWrapper = new SkladWrapper(@"wms-config.xml", false);
+        SkladWrapper skladWrapper = new SkladWrapper(@"ant-config.xml", false);
         skladWrapper.AddLogger();
         skladWrapper.AddSklad();
-        skladWrapper.AddAnts();
+        //skladWrapper.AddAnts();
         new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(0));
 
          //SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
@@ -60,7 +60,7 @@ public class main : MonoBehaviour
                 br.SetPositionAndRotation(getPosition(x, y), Quaternion.identity);
             }
         }
-        startTime = DateTime.Now - time_shift;
+        startTime = DateTime.Now;
         asc = logs[0];
     }
 
@@ -111,8 +111,6 @@ public class main : MonoBehaviour
                         StartCoroutine(antsBot[asc.uid].ChangeCollor(1, color));
                     }
                 }
-
-
 
                 count++;
                 asc = logs[count];

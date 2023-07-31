@@ -9,13 +9,12 @@ namespace AntControlModel
     {
         static void Main(string[] args)
         {
-            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config.xml", false);
-
+            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\ant-config.xml", false, false);
             skladWrapper.AddLogger();
             skladWrapper.AddSklad();
-            skladWrapper.AddAnts(1);
+            skladWrapper.AddAnts(16);
 
-            new AntControl(skladWrapper).Run();
+            new AntControl(skladWrapper).RunFeromon(TimeSpan.MaxValue);
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));
 

@@ -177,14 +177,17 @@ namespace ControlModel
                     AntBot bot = minBotPath.bot;
                     if (minBotPath.cList.AddCommand(new AntBotLoad(bot), false))
                     {
+                        
                         Random rnd = new Random();
+                        /*
                         int nn = rnd.Next(100);
                         int next = 2;
                         if (nn < 10)
                             next = 0;
                         else if (nn < 95)
                             next = 1;
-
+                        */
+                        int next = rnd.Next(bot.sklad.target.Count);
                         var gp = getPathFromLastStep(minBotPath.cList, bot.sklad.target[next]);
                         if (gp.isPathExist)
                         {

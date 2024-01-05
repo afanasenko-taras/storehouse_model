@@ -12,9 +12,9 @@ namespace AntControlModel
             SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\ant-config.xml", false, false);
             skladWrapper.AddLogger();
             skladWrapper.AddSklad();
-            skladWrapper.AddAnts(16);
+            skladWrapper.AddAnts(5);
 
-            new AntControl(skladWrapper).RunFeromon(TimeSpan.MaxValue);
+            new AntControl(skladWrapper).RunTarget(TimeSpan.MaxValue);
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));
 

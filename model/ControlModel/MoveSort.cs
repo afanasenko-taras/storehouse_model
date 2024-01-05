@@ -52,7 +52,7 @@ namespace ControlModel
                 if (!skladWrapper.isEventCountEmpty())
                     continue;
 
-                if (skladWrapper.GetSklad().deliveryCount >= 5000)
+                if (skladWrapper.GetSklad().deliveryCount >= 10000)
                 {
                     Console.WriteLine($"Delivery time: {skladWrapper.updatedTime.TotalSeconds}");
                     break;
@@ -126,13 +126,13 @@ namespace ControlModel
                     else
                     {
                         Console.WriteLine("AHTUNG");
-                        Console.ReadLine();
+                        //Console.ReadLine();
                     }
 
                 } else
                 {
                     Console.WriteLine("AHTUNG");
-                    Console.ReadLine();
+                    //Console.ReadLine();
                 }
             }
         }
@@ -178,7 +178,13 @@ namespace ControlModel
                     if (minBotPath.cList.AddCommand(new AntBotLoad(bot), false))
                     {
                         Random rnd = new Random();
-                        int next = rnd.Next(bot.sklad.target.Count);
+                        int nn = rnd.Next(100);
+                        int next = 2;
+                        if (nn < 10)
+                            next = 0;
+                        else if (nn < 95)
+                            next = 1;
+
                         var gp = getPathFromLastStep(minBotPath.cList, bot.sklad.target[next]);
                         if (gp.isPathExist)
                         {

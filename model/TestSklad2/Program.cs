@@ -33,11 +33,11 @@ namespace TestSklad2
 
         static void Main(string[] args)
         {            
-            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config.xml", false);
+            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config2.xml", false, false);
             //skladWrapper.isDebug = true;
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
-            skladWrapper.AddAnts(20);
+            skladWrapper.AddAnts(10);
             //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
             new MoveSort(skladWrapper).Run();
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");

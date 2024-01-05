@@ -44,7 +44,9 @@ namespace SkladModel
             foreach (string line in File.ReadLines(skladConfig.antBotLayout))
             {
                 string[] numbers = line.Split(',');
-                AddEvent(TimeSpan.Zero, new AntBotCreate(numbers[0], int.Parse(numbers[1]), int.Parse(numbers[2]), 
+                int x = int.Parse(numbers[1]);
+                int y = int.Parse(numbers[2]);
+                AddEvent(TimeSpan.Zero, new AntBotCreate(numbers[0], x, y, 
                     int.Parse(numbers[3])==1, double.Parse(numbers[4]), double.Parse(numbers[5]), isDebug, skladConfig));
                 count++;
                 if (count == numRobots)

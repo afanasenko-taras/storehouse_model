@@ -37,7 +37,7 @@ public class main : MonoBehaviour
     void Start()
     {
         System.Random rnd = new System.Random(DateTime.Now.Millisecond);
-        SkladWrapper skladWrapper = new SkladWrapper(@"ant-config.xml", false);
+        SkladWrapper skladWrapper = new SkladWrapper(@"wms-config.xml", false);
         skladWrapper.AddLogger();
         skladWrapper.AddSklad();
         //skladWrapper.AddAnts();

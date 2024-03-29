@@ -37,7 +37,7 @@ namespace SkladModel
 
         public override void ReserveRoom()
         {
-            if (!isNeedReserve)
+            if (!isNeedReserve || false)
                 return;
             antBot.ReserveRoom(getStartTime(), getStartTime() +
                 TimeSpan.FromSeconds(1.0 / antBot.unitSpeed));

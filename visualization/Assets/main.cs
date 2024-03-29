@@ -81,6 +81,7 @@ public class main : MonoBehaviour
                     antsBot[asc.uid].antStateChange = asc;
                     antsBot[asc.uid].SetPosition();
                     antsBot[asc.uid].startTime = startTime;
+                    //StartCoroutine(antsBot[asc.uid].ChangeCollor(0, Color.red));
                 }
                 else
                 {
@@ -103,12 +104,12 @@ public class main : MonoBehaviour
                     }
                     if (asc.command == "Load")
                     {
-                        StartCoroutine(antsBot[asc.uid].ChangeCollor(2, Color.green));
+                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, Color.yellow));
                     }
                     if (asc.command == "Unload")
                     {
                         Color32 color = new Color32((byte)(255 * antsBot[asc.uid].antStateChange.charge / 7200), 0, 0, 255);
-                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, color));
+                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, Color.red));
                     }
                 }
 

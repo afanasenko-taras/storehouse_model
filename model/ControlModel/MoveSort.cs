@@ -23,7 +23,7 @@ namespace ControlModel
     }
     public class MoveSort
     {
-        SkladWrapper skladWrapper;
+        SkladWrapper        skladWrapper;
 
         public MoveSort(SkladWrapper skladWrapper) { 
             this.skladWrapper = skladWrapper;
@@ -116,6 +116,11 @@ namespace ControlModel
                     if (ant.reserved.Any(r=>r.x == ant.xCord && r.y == ant.yCord && (r.from - ant.lastUpdated).TotalSeconds < 0.0001 && r.to == TimeSpan.MaxValue))
                         continue;
                 }
+
+                ant.escapePath.commands.ForEach(c => c.Ev.antBot = ant);
+                applyPath(ant, ant.escapePath);
+                continue;
+
                 var gp = getPathToEscape(ant);
                 if (gp.isPathExist)
                 {
@@ -132,6 +137,7 @@ namespace ControlModel
                 } else
                 {
                     Console.WriteLine("AHTUNG");
+                    gp = getPathToEscape(ant);
                     //Console.ReadLine();
                 }
             }
@@ -150,9 +156,6 @@ namespace ControlModel
                 (AntBot bot, CommandList cList, TimeSpan minTime) minBotPath = (null, null, TimeSpan.MaxValue);
                 freeAnts.ForEach(freeAnt =>
                 {
-                    
-
-
                     if (freeAnt.commandList.commands.Count>0)
                     {
                         throw new CheckStateException();
@@ -193,7 +196,7 @@ namespace ControlModel
                         {
                             if (gp.cList.AddCommand(new AntBotUnload(minBotPath.bot, bot.sklad.target[next]), false))
                             {
-                                gp.cList.AddCommand(new AntBotWait(minBotPath.bot, TimeSpan.Zero));
+                                gp.cList.AddCommand(new AntBotWait(minBotPath.bot, TimeSpan.Zero), false);
                                 var escapePath = getPathToEscape(gp.cList);
                                 if (escapePath.isPathExist)
                                 {                                
@@ -234,6 +237,7 @@ namespace ControlModel
             antBot.CleanReservation();
             for (int i = 0; i < cList.commands.Count; i++)
             {
+                //Console.WriteLine(cList.commands[i].Ev.GetType().Name);
                 antBot.commandList.AddCommand(cList.commands[i].Ev);
             }
         }
@@ -242,6 +246,7 @@ namespace ControlModel
         {
             for (int i = 0; i < cList.commands.Count; i++)
             {
+                //Console.WriteLine("Reserv!!!    " + cList.commands[i].Ev.GetType().Name);
                 antBot.commandList.AddCommand(cList.commands[i].Ev);
             }
         }
@@ -252,7 +257,6 @@ namespace ControlModel
             AntBot clone = cList.antState.ShalowClone();
             clone.lastUpdated = cList.lastTime;
             return getPath(clone, point);
-
         }
 
         private void initState(AntBot antBot)
@@ -323,6 +327,9 @@ namespace ControlModel
 
         private (bool isPathExist, CommandList cList) getPath(AntBot antBot, (int x, int y, bool isXDirection) point)
         {
+            antBot.targetDirection = point.isXDirection;
+            antBot.targetXCoordinate = point.x;
+            antBot.targetYCoordinate = point.y;
             CommandList cList;
             initState(antBot);
             initGraph(antBot);
@@ -374,6 +381,7 @@ namespace ControlModel
 
         void NextStep(AntBot antBot)
         {
+            ActionCounter.next_count++;
             var gf = graph.Pop();
             var commandList = gf.Value;
             var ant = commandList.antState;

@@ -18,6 +18,15 @@ namespace TestSklad2
     {
         private static double timeEnergyMetric(CommandList arg)
         {
+            return arg.lastTime.TotalSeconds; //+
+                //Math.Abs(arg.antState.xCord - arg.antState.targetXCoordinate) * 2.0 +
+                //Math.Abs(arg.antState.yCord - arg.antState.targetYCoordinate) * 2.0;
+           // +
+           //((arg.antState.targetDirection == arg.antState.isXDirection) ? 1 : 0) * 2.0;
+            return arg.lastTime.TotalSeconds +
+                (1 - arg.antState.charge / arg.antBot.unitChargeValue) *
+                arg.antBot.unitChargeTime;
+            return arg.lastTime.TotalSeconds;
             return arg.lastTime.TotalSeconds +
                 (1 - arg.antState.charge / arg.antBot.unitChargeValue) *
                 arg.antBot.unitChargeTime +
@@ -33,16 +42,18 @@ namespace TestSklad2
 
         static void Main(string[] args)
         {            
-            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config2.xml", false, false);
+            SkladWrapper skladWrapper = new SkladWrapper(@"..\..\..\..\..\wms-config2.xml", false);
             //skladWrapper.isDebug = true;
             skladWrapper.AddLogger();
             skladWrapper.AddSklad(timeEnergyMetric);
-            skladWrapper.AddAnts(10);
-            //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(360));
+            skladWrapper.AddAnts(12);
+            //new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(3600));
             new MoveSort(skladWrapper).Run();
+            Console.WriteLine(ActionCounter.next_count);
             skladWrapper.SaveLog(@"..\..\..\..\..\log.xml");
             SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
             File.WriteAllBytes(@"..\..\..\..\..\log_unity.xml", SkladWrapper.SerializeXML(logger.logs.ToArray()));
+            Console.ReadLine();
         }
 
 

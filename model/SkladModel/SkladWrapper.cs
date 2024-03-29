@@ -152,31 +152,7 @@ namespace SkladModel
 
             return _antBot.getFreePath();
         }
-        private void reservePath(AntBot antBot, Direction direction, TimeSpan actionTime, int numCoord)
-        {
-            AntBot _antBot = cloneAnt(antBot);
-            _antBot.Update(actionTime);
-            _antBot.reserved = antBot.reserved;
-            
-            AbstractEvent ev = new AntBotMove(_antBot);
-            ev.runEvent(objects, actionTime);
-            Reserve(_antBot, numCoord);
-        }
 
-        public bool Reserve(AntBot antBot, int numCoord)
-        {
-            for (int shift = 0; shift < numCoord; shift++)
-            {
-                var coord = antBot.getShift(shift);
-
-                TimeSpan startInterval = antBot.lastUpdated + TimeSpan.FromSeconds(shift / antBot.unitSpeed);
-                double wait = shift < numCoord - 1 ? 2.0 : 1.0;
-                TimeSpan endInterval = startInterval + TimeSpan.FromSeconds(wait / antBot.unitSpeed);
-                Debug($"Reserve x:{coord.x}, y:{coord.y} from {startInterval} to {endInterval}");
-                antBot.ReserveRoom(coord.x, coord.y, startInterval, endInterval);
-            }
-            return true;
-        }
 
         public static byte[] SerializeXML<T>(T stamp)
         {

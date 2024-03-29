@@ -34,7 +34,7 @@ namespace AbstractModel
             }
         }
 
-        protected void AddEvent(TimeSpan timeSpan, AbstractEvent modelEvent)
+        protected void  AddEvent(TimeSpan timeSpan, AbstractEvent modelEvent)
         {
             while (eventList.ContainsKey(timeSpan))
             {

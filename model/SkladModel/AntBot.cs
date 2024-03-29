@@ -439,6 +439,10 @@ namespace SkladModel
             _antBot.reserved= this.reserved;
             _antBot.isDebug= this.isDebug;
 
+            _antBot.targetDirection = this.targetDirection;
+            _antBot.targetXCoordinate = this.targetXCoordinate;
+            _antBot.targetYCoordinate = this.targetYCoordinate;
+
             _antBot.unitSpeed = this.unitSpeed;
             _antBot.unitAccelerationTime = this.unitAccelerationTime;
             _antBot.unitStopTime = this.unitStopTime;

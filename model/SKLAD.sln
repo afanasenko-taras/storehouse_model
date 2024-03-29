@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestSklad2", "TestSklad2\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlModel", "ControlModel\ControlModel.csproj", "{6B792BB1-7F7D-4465-8742-E18195E6CE6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntControlModel", "AntControlModel\AntControlModel.csproj", "{C7F2F3C4-AED2-4315-BF70-3FDDA23494E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntControlModel", "AntControlModel\AntControlModel.csproj", "{C7F2F3C4-AED2-4315-BF70-3FDDA23494E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostModel", "PostModel\PostModel.csproj", "{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{C7F2F3C4-AED2-4315-BF70-3FDDA23494E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7F2F3C4-AED2-4315-BF70-3FDDA23494E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7F2F3C4-AED2-4315-BF70-3FDDA23494E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

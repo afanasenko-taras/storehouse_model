@@ -19,7 +19,7 @@
   <unitChargeTime>720</unitChargeTime>
   <unitChargeValue>7000000</unitChargeValue>
   <unitCount>1</unitCount>
-  <skladLayout>W_1_3_1.csv</skladLayout>
+  <skladLayout>W_size_4_4.csv</skladLayout>
   <antBotLayout>wms-robots.csv</antBotLayout>
   <incomeLayout>wms-income-1k.txt</incomeLayout>
 </SkladConfig>

@@ -5,10 +5,13 @@ using System.Text;
 
 namespace PostModel
 {
-    class SortingCenter : AbstractObject
+
+    class PostOffice : AbstractObject
     {
+        // direcion, type of message
+        Dictionary<int, List<Message>> exitPools = new Dictionary<int, List<Message>>();
 
-
+        
 
         public override (TimeSpan, AbstractEvent) getNearestEvent(List<AbstractObject> objects)
         {
@@ -17,7 +20,7 @@ namespace PostModel
 
         public override void Update(TimeSpan timeSpan)
         {
-            lastUpdated = timeSpan;
+            throw new NotImplementedException();
         }
     }
 }

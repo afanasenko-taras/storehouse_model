@@ -5,11 +5,8 @@ using System.Text;
 
 namespace PostModel
 {
-    class SortingCenter : AbstractObject
+    class Message : AbstractObject
     {
-
-
-
         public override (TimeSpan, AbstractEvent) getNearestEvent(List<AbstractObject> objects)
         {
             throw new NotImplementedException();
@@ -17,7 +14,12 @@ namespace PostModel
 
         public override void Update(TimeSpan timeSpan)
         {
-            lastUpdated = timeSpan;
+            throw new NotImplementedException();
         }
+
+        int type;
+        int directionFrom;
+        int directionTo;
+
     }
 }

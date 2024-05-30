@@ -12,6 +12,7 @@ using Object = UnityEngine.Object;
 using Unity.VisualScripting;
 using ControlModel;
 using TMPro;
+using UnityEngine.UI;
 
 public class main : MonoBehaviour
 {
@@ -23,44 +24,144 @@ public class main : MonoBehaviour
 
     public Transform[] brick;
     public Transform AntBotTransform;
-    public TextMeshProUGUI timerTMP;
+    public Text timerTMP;
     Dictionary<string, AntBotUnity> antsBot = new Dictionary<string, AntBotUnity>();
-    private SkladWrapper skladWrapper;
-    Sklad sklad;
     DateTime startTime;
     AntStateChange asc;
+    Dictionary<string, (int, int)> lastPosition = new Dictionary<string, (int, int)>();
+    List<AntStateChange> logs = new List<AntStateChange>();
     public Transform panel;
-    AntStateChange[] logs;
-    TimeSpan time_shift = TimeSpan.FromMinutes(201);
+    TimeSpan time_shift = TimeSpan.FromMinutes(0);
 
     // Start is called before the first frame update
     void Start()
     {
-        System.Random rnd = new System.Random(DateTime.Now.Millisecond);
-        SkladWrapper skladWrapper = new SkladWrapper(@"wms-config.xml", false);
-        skladWrapper.AddLogger();
-        skladWrapper.AddSklad();
-        //skladWrapper.AddAnts();
-        new MoveSort(skladWrapper).Run(TimeSpan.FromSeconds(0));
-
-         //SkladLogger logger = (SkladLogger)skladWrapper.objects.First(x => x is SkladLogger);
-        //logs = logger.logs.ToArray();
-        logs = SkladWrapper.DeserializeXML<AntStateChange[]>(File.ReadAllBytes("log_unity.xml"));
-
-
-        sklad = (Sklad) skladWrapper.objects.First(x=>x is Sklad);
-
-        foreach (var yl in sklad.skladLayout)
+        string filePath = @"./field_b.csv";
+        List<string[]> listA = new List<string[]>();
+        StreamReader reader = null;
+        if (File.Exists(filePath))
         {
-            int y = yl.Key;
-            foreach (var xl in yl.Value) {
-                Transform br = Object.Instantiate(brick[xl.Value]);
-                br.SetParent(panel);
-                int x = xl.Key;
-                br.SetPositionAndRotation(getPosition(x, y), Quaternion.identity);
+            reader = new StreamReader(File.OpenRead(filePath));
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(';');
+                listA.Add(values);
             }
         }
+        else
+        {
+            Debug.Log("File doesn't exist");
+        }
+
+
+        int uid = 0;
+        int y = 0;
+        foreach (var line in listA)
+        {
+            int x = 0;
+            foreach (var v in line) {
+                Debug.Log(x + "," + y);
+                int t = 0;
+                if (v == "b")
+                    t = 0;
+                if (v == "g")
+                    t = 1;
+                if (v == "i")
+                    t = 3;
+                if (v == "o")
+                    t = 2;
+                if (v == "r") {
+                    t = 1;
+                    Transform ab = Instantiate(AntBotTransform);
+                    ab.SetParent(panel);
+                    AntStateChange asc = new AntStateChange();
+                    asc.uid = uid.ToString();
+                    asc.xCoordinate = x;
+                    asc.yCoordinate = y;
+                    lastPosition.Add(asc.uid, (x, y));
+                    asc.lastUpdated = 0;
+                    uid++;
+                    antsBot.Add(asc.uid, ab.GetComponent<AntBotUnity>());
+                    antsBot[asc.uid].antStateChange = asc;
+                    antsBot[asc.uid].SetPosition();
+                    antsBot[asc.uid].startTime = startTime; 
+                }
+
+
+                Transform br = Object.Instantiate(brick[t]);
+                br.SetParent(panel);
+                br.SetPositionAndRotation(getPosition(x, y), Quaternion.identity);
+                x++;
+            }
+            y++;
+        }
+
+
+        filePath = @"./model_1.txt";
+        reader = null;
+        if (File.Exists(filePath))
+        {
+            reader = new StreamReader(File.OpenRead(filePath));
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                var values = line.Split(' ');
+                int event_id = int.Parse(values[0]);
+                int time_event = int.Parse(values[1]);
+                string ant_id = values[2];
+                string event_type = values[3];
+                int xx = int.Parse(values[4])+1;
+                int yy = int.Parse(values[5])+1;
+                AntStateChange abc = new AntStateChange();
+                abc.uid = ant_id;
+                if ((event_type == "W") || (event_type == "RCW") || (event_type == "RCCW") || (event_type == "L") || (event_type == "UL"))
+                {
+                    abc.xCoordinate = xx;
+                    abc.yCoordinate = yy;
+                    abc.xSpeed = 0;
+                    abc.ySpeed = 0;
+                    abc.lastUpdated = time_event;
+                    lastPosition[abc.uid] = (xx, yy);
+                    logs.Add(abc);
+                }
+                else if ((event_type == "MF") || (event_type == "MB"))
+                {
+                    int xl = int.Parse(values[4])+1;
+                    int yl = int.Parse(values[5])+1;
+                    xx = int.Parse(values[6])+1;
+                    yy = int.Parse(values[7])+1;
+                    abc.lastUpdated = time_event;
+                    abc.xCoordinate = xl;
+                    abc.yCoordinate = yl;
+                    abc.xSpeed = (xx - xl);
+                    abc.ySpeed = (yy - yl);
+                    logs.Add(abc);
+                }
+                if (event_type == "L")
+                {
+                    abc.command = "Load";
+                }
+                if (event_type == "UL")
+                {
+                    abc.command = "Unload";
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("File doesn't exist");
+        }
+
+
+
         startTime = DateTime.Now;
+        foreach(var ant in antsBot.Values)
+        {
+            ant.startTime = startTime;
+        }
+
+
         asc = logs[0];
     }
 
@@ -69,18 +170,14 @@ public class main : MonoBehaviour
     {
         TimeSpan current = DateTime.Now - startTime;
         timerTMP.text = string.Format("{0:dd\\.hh\\:mm\\:ss}", current);
+        Color startColor = new Color((float)(192.0 / 255.0), (float)(101.0 / 255.0), (float)(101.0 / 255.0));
         if (current.TotalSeconds > asc.lastUpdated) 
         {
             do
             {
                 if (asc.command == "Create AntBot")
                 {
-                    Transform ab = Instantiate(AntBotTransform);
-                    ab.SetParent(panel);
-                    antsBot.Add(asc.uid, ab.GetComponent<AntBotUnity>());
-                    antsBot[asc.uid].antStateChange = asc;
-                    antsBot[asc.uid].SetPosition();
-                    antsBot[asc.uid].startTime = startTime;
+
                     //StartCoroutine(antsBot[asc.uid].ChangeCollor(0, Color.red));
                 }
                 else
@@ -108,8 +205,8 @@ public class main : MonoBehaviour
                     }
                     if (asc.command == "Unload")
                     {
-                        Color32 color = new Color32((byte)(255 * antsBot[asc.uid].antStateChange.charge / 7200), 0, 0, 255);
-                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, Color.red));
+                        //Color32 color = new Color32((byte)(255 * antsBot[asc.uid].antStateChange.charge / 7200), 0, 0, 255);
+                        StartCoroutine(antsBot[asc.uid].ChangeCollor(1, startColor));
                     }
                 }
 

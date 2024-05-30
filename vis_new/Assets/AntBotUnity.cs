@@ -15,8 +15,6 @@ public class AntBotUnity : MonoBehaviour
     public void SetPosition()
     {
         SetPosition(main.getPosition(antStateChange.xCoordinate, antStateChange.yCoordinate));
- 
-        
     }
 
     public void SetPosition(Vector2 vector2)
@@ -38,6 +36,11 @@ public class AntBotUnity : MonoBehaviour
             transform.rotation = Quaternion.Lerp(fromAngle, toAngle, t);
             yield return null;
         }
+    }
+
+    public Color GetColor()
+    {
+        return sr.color;
     }
 
     public IEnumerator ChangeCollor(int time, Color color)

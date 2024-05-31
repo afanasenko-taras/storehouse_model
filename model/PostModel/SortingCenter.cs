@@ -5,13 +5,20 @@ using System.Text;
 
 namespace PostModel
 {
-    class SortingCenter : AbstractObject
+    class SortingCenter : FastAbstractObject
     {
 
+        Dictionary<string, string> routeTable = new Dictionary<string, string>();
+        Dictionary<string, List<Message>> gates = new Dictionary<string, List<Message>>(); 
 
-        public override (TimeSpan, AbstractEvent) getNearestEvent(List<AbstractObject> objects)
+        public void AddGate(string gateUid)
         {
-            throw new NotImplementedException();
+            gates.Add(gateUid, new List<Message>());
+        }
+
+        public override (TimeSpan, FastAbstractEvent) getNearestEvent()
+        {
+            return (TimeSpan.MaxValue, null);
         }
 
         public override void Update(TimeSpan timeSpan)

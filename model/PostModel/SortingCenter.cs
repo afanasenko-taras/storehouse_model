@@ -9,7 +9,6 @@ namespace PostModel
     {
 
 
-
         public override (TimeSpan, AbstractEvent) getNearestEvent(List<AbstractObject> objects)
         {
             throw new NotImplementedException();

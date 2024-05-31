@@ -91,4 +91,5 @@ namespace AbstractModel
         protected abstract void CheckState();
     }
 
+
 }

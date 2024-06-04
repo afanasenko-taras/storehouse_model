@@ -17,45 +17,73 @@ namespace AbstractModel
 
     public abstract class FastAbstractEvent
     {
-        public abstract List<FastAbstractObject> runEvent(Dictionary<string, FastAbstractObject> objects, TimeSpan timeSpan);
+        public abstract void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan);
     }
 
     public abstract class FastAbstractWrapper
     {
-        public Dictionary<string, FastAbstractObject> objects = new Dictionary<string, FastAbstractObject>();
+        private Dictionary<string, FastAbstractObject> objects = new Dictionary<string, FastAbstractObject>();
+        
         protected SortedList<TimeSpan, FastAbstractEvent> eventList = new SortedList<TimeSpan, FastAbstractEvent>();
+        protected Dictionary<string, TimeSpan> objectsEventTime = new Dictionary<string, TimeSpan>();
         public TimeSpan updatedTime;
-        private List<FastAbstractObject> objForUpdate;
+        private HashSet<string> objectsKeyForUpdate;
 
-        protected void AddEvent(TimeSpan timeSpan, FastAbstractEvent modelEvent)
+        public FastAbstractObject getObject(string key)
+        {
+            var obj = objects[key];
+            obj.Update(updatedTime);
+            objectsKeyForUpdate.Add(key);
+            return objects[key];
+        }
+
+        protected void AddEvent(TimeSpan timeSpan, FastAbstractEvent modelEvent, string objUid = null)
         {
             while (eventList.ContainsKey(timeSpan))
             {
                 timeSpan = timeSpan.Add(TimeSpan.FromTicks(1));
             }
             eventList.Add(timeSpan, modelEvent);
+            if (!(objUid is null))
+            {
+                objectsEventTime.Add(objUid, timeSpan);
+            }
         }
 
         public bool Next()
         {
-
             if (eventList.Count == 0)
                 return false;
-
+            objectsKeyForUpdate = new HashSet<string>();
             var task = eventList.First();
             updatedTime = task.Key;
             eventList.Remove(task.Key);
-            var objForUpdate = task.Value.runEvent(objects, task.Key);
-            objForUpdate.ForEach(obj =>
+            task.Value.runEvent(this, task.Key);
+
+            foreach (var objKey in objectsKeyForUpdate)
             {
-                var near = obj.getNearestEvent();
-                if (!(near.Item2 is null))
+                if (objectsEventTime.ContainsKey(objKey)) {
+                    eventList.Remove(objectsEventTime[objKey]);
+                    objectsEventTime.Remove(objKey);
+                }
+                var ev = objects[objKey].getNearestEvent();
+                if (!(ev.Item2 is null))
                 {
-                    AddEvent(near.Item1, near.Item2);
-                } 
-            });
+                    AddEvent(ev.Item1, ev.Item2, objKey);
+                }
+            }
 
             return true;
+        }
+
+        public void addObject(FastAbstractObject obj)
+        {
+            objects.Add(obj.uid, obj);
+            var ev = obj.getNearestEvent();
+            if (!(ev.Item2 is null))
+            {
+                AddEvent(ev.Item1, ev.Item2, obj.uid);
+            }
         }
     }
 

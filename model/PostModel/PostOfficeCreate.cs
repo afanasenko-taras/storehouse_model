@@ -14,15 +14,14 @@ namespace PostModel
             this.uid = uid;
         }
 
-        public override List<FastAbstractObject> runEvent(Dictionary<string, FastAbstractObject> objects, TimeSpan timeSpan)
+        public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
             PostOffice postOffice = new PostOffice();
             postOffice.uid = this.uid;
-            objects.Add(postOffice.uid, postOffice);
+            wrapper.addObject(postOffice);
             Console.WriteLine($"postOffice {postOffice.uid} created {postOffice.lastUpdated}");
             List<FastAbstractObject> result = new List<FastAbstractObject>();
             result.Add(postOffice);
-            return result;
         }
     }
 }

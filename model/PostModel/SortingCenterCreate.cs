@@ -14,15 +14,12 @@ namespace PostModel
             this.uid = uid;
         }
 
-        public override List<FastAbstractObject> runEvent(Dictionary<string, FastAbstractObject> objects, TimeSpan timeSpan)
+        public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
             SortingCenter sortingCenter = new SortingCenter();
             sortingCenter.uid = this.uid;
-            objects.Add(sortingCenter.uid, sortingCenter);
-            Console.WriteLine($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated}");
-            List<FastAbstractObject> result = new List<FastAbstractObject>();
-            result.Add(sortingCenter);
-            return result;
+            wrapper.addObject(sortingCenter);
+            Console.WriteLine($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated} time {timeSpan}");
         }
 
 

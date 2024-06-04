@@ -5,15 +5,17 @@ using System.Text;
 
 namespace PostModel
 {
-    class SortingCenter : FastAbstractObject
+    class SortingCenter : PostCenter
     {
 
         Dictionary<string, string> routeTable = new Dictionary<string, string>();
-        Dictionary<string, List<Message>> gates = new Dictionary<string, List<Message>>(); 
+ 
 
-        public void AddGate(string gateUid)
+
+
+        public void AddRoute(string directionUid, string gateUid)
         {
-            gates.Add(gateUid, new List<Message>());
+            routeTable.Add(directionUid, gateUid);
         }
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()

@@ -16,14 +16,11 @@ namespace PostModel
             this.directionUid = directionUid;
         }
 
-        public override List<FastAbstractObject> runEvent(Dictionary<string, FastAbstractObject> objects, TimeSpan timeSpan)
+        public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
-
-            SortingCenter sc = (SortingCenter)objects[sortingUid];
+            PostCenter sc = (PostCenter)wrapper.getObject(sortingUid);
             sc.AddGate(directionUid);
-            Console.WriteLine($"sortingCenter {sc.uid} added gate too {directionUid}");
-            List<FastAbstractObject> result = new List<FastAbstractObject>();
-            return result;
+            Console.WriteLine($"{sc.uid} added gate to {directionUid} time {timeSpan}");
         }
     }
 }

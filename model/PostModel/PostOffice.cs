@@ -6,11 +6,16 @@ using System.Text;
 namespace PostModel
 {
 
-    class PostOffice : FastAbstractObject
+    class PostOffice : PostCenter
     {
-        // direcion, type of message
-        Dictionary<int, List<Message>> exitPools = new Dictionary<int, List<Message>>();
 
+
+        SortedList<TimeSpan, string> messageSource = new SortedList<TimeSpan, string>();
+
+        public void AddMessage(TimeSpan timeSpan, string toUid)
+        {
+            messageSource.Add(timeSpan, toUid);
+        }
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()
         {
@@ -19,7 +24,7 @@ namespace PostModel
 
         public override void Update(TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
+            // No need update
         }
     }
 }

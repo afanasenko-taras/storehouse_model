@@ -1,6 +1,7 @@
 ﻿using AbstractModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PostModel
@@ -24,7 +25,18 @@ namespace PostModel
 
         public override void Update(TimeSpan timeSpan)
         {
-            // No need update
+            lastUpdated = timeSpan;
+            if (messageSource.Count == 0)
+                return;
+            var message = messageSource.First();
+            while (message.Key < lastUpdated)
+            {
+                messageSource.Remove(message.Key);
+                gates[routeTable[message.Value]].Add(new Message(this.uid, message.Value));
+                if (messageSource.Count == 0)
+                    break;
+                message = messageSource.First();
+            }
         }
     }
 }

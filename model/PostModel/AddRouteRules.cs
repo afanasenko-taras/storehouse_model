@@ -21,9 +21,9 @@ namespace PostModel
 
         public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
-            SortingCenter sc = (SortingCenter)wrapper.getObject(sortingUid);
+            PostCenter sc = (PostCenter)wrapper.getObject(sortingUid);
             sc.AddRoute(directionUid, gateUid);
-            Console.WriteLine($"sortingCenter {sc.uid} added route rules {directionUid} send to gate {gateUid} time {timeSpan}");
+            Console.WriteLine($"PostCenter {sc.uid} added route rules {directionUid} send to gate {gateUid} time {timeSpan}");
         }
     }
 }

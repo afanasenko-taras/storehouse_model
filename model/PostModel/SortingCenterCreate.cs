@@ -22,7 +22,5 @@ namespace PostModel
             Console.WriteLine($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated} time {timeSpan}");
         }
 
-
-
     }
 }

@@ -48,6 +48,24 @@ namespace PostRunner
             postWrapper.AddRoute("7", "2", "5");
             postWrapper.AddRoute("7", "1", "5");
 
+
+            postWrapper.AddRoute("1", "2", "5");
+            postWrapper.AddRoute("1", "3", "5");
+            postWrapper.AddRoute("1", "4", "5");
+
+            postWrapper.AddRoute("2", "1", "5");
+            postWrapper.AddRoute("2", "3", "5");
+            postWrapper.AddRoute("2", "4", "5");
+
+            postWrapper.AddRoute("3", "4", "6");
+            postWrapper.AddRoute("3", "1", "6");
+            postWrapper.AddRoute("3", "2", "6");
+
+            postWrapper.AddRoute("4", "3", "6");
+            postWrapper.AddRoute("4", "1", "6");
+            postWrapper.AddRoute("4", "2", "6");
+
+
             postWrapper.AddMessage(TimeSpan.FromHours(1), "1", "2");
             postWrapper.AddMessage(TimeSpan.FromHours(2), "1", "3");
             postWrapper.AddMessage(TimeSpan.FromHours(20), "1", "4");
@@ -66,7 +84,7 @@ namespace PostRunner
             shedule.Add(14, ("5", TransportAction.Unload));
             postWrapper.AddPostTransport(shedule);
 
-            while (postWrapper.Next())
+            while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(5))
             {
             }
         }

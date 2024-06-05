@@ -17,6 +17,7 @@ namespace AbstractModel
 
     public abstract class FastAbstractEvent
     {
+        public string objId = null;
         public abstract void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan);
     }
 
@@ -43,6 +44,7 @@ namespace AbstractModel
             {
                 timeSpan = timeSpan.Add(TimeSpan.FromTicks(1));
             }
+            modelEvent.objId = objUid;
             eventList.Add(timeSpan, modelEvent);
             if (!(objUid is null))
             {
@@ -58,8 +60,11 @@ namespace AbstractModel
             var task = eventList.First();
             updatedTime = task.Key;
             eventList.Remove(task.Key);
+            if (!(task.Value.objId is null))
+            {
+                getObject(task.Value.objId);
+            }
             task.Value.runEvent(this, task.Key);
-
             foreach (var objKey in objectsKeyForUpdate)
             {
                 if (objectsEventTime.ContainsKey(objKey)) {

@@ -5,21 +5,14 @@ using System.Text;
 
 namespace PostModel
 {
-    class Message : AbstractObject
-    {
-        public override (TimeSpan, AbstractEvent) getNearestEvent(List<AbstractObject> objects)
+    class Message
+    { 
+        public Message(string directionFrom, string directionTo)
         {
-            throw new NotImplementedException();
+            this.directionFrom = directionFrom;
+            this.directionTo = directionTo;
         }
-
-        public override void Update(TimeSpan timeSpan)
-        {
-            throw new NotImplementedException();
-        }
-
-        int type;
-        int directionFrom;
-        int directionTo;
-
+        public string directionFrom;
+        public string directionTo;
     }
 }

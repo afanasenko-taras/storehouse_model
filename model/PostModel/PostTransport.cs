@@ -17,7 +17,8 @@ namespace PostModel
 
     class PostTransport : FastAbstractObject
     {
-        Dictionary<int, (string postUid, TransportAction tAction)> shedule;
+        public Dictionary<int, (string postUid, TransportAction tAction)> shedule;
+        public Dictionary<string, List<Message>> messageOnBoard = new Dictionary<string, List<Message>>();
 
         public PostTransport(Dictionary<int, (string postUid, TransportAction tAction)> shedule)
         {
@@ -31,20 +32,20 @@ namespace PostModel
             {
                 if (hour>last_hour)
                 {
-                    return (TimeSpan.FromDays(lastUpdated.TotalDays) + TimeSpan.FromHours(hour), 
-                        new PostTransportComing(this, shedule[hour]));
+                    return (TimeSpan.FromDays(lastUpdated.Days) + TimeSpan.FromHours(hour), 
+                        new PostTransportComing(this.uid, shedule[hour]));
                 }
             }
 
             var hour1 = shedule.Keys.First();
-            return (TimeSpan.FromDays(lastUpdated.TotalDays + 1) + TimeSpan.FromHours(hour1),
-                        new PostTransportComing(this, shedule[hour1]));
+            return (TimeSpan.FromDays(lastUpdated.Days + 1) + TimeSpan.FromHours(hour1),
+                        new PostTransportComing(this.uid, shedule[hour1]));
 
         }
 
         public override void Update(TimeSpan timeSpan)
         {
-            throw new NotImplementedException();
+            lastUpdated = timeSpan;
         }
     }
 }

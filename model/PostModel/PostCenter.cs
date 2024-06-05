@@ -7,11 +7,19 @@ namespace PostModel
 {
     abstract class PostCenter : FastAbstractObject
     {
-        protected Dictionary<string, List<Message>> gates = new Dictionary<string, List<Message>>();
+        public Dictionary<string, List<Message>> gates = new Dictionary<string, List<Message>>();
 
         public void AddGate(string gateUid)
         {
             gates.Add(gateUid, new List<Message>());
+        }
+
+
+        protected Dictionary<string, string> routeTable = new Dictionary<string, string>();
+
+        public void AddRoute(string directionUid, string gateUid)
+        {
+            routeTable.Add(directionUid, gateUid);
         }
     }
 }

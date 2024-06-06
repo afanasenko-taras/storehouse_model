@@ -54,7 +54,7 @@ namespace PostModel
                         {
                             foreach(var message in postTransport.messageOnBoard[postCenter.uid])
                             {
-                                Console.WriteLine($"Message from {message.directionFrom} delivered to {message.directionTo}");
+                                Console.WriteLine($"!!!!!Message from {message.directionFrom} delivered to {message.directionTo} at {timeSpan}");
                             }
                             postTransport.messageOnBoard.Remove(postCenter.uid);
                         }
@@ -62,7 +62,8 @@ namespace PostModel
                         {
                             foreach (var message in postTransport.messageOnBoard[postCenter.uid])
                             {
-                                Console.WriteLine($"Message from {message.directionFrom} to {message.directionTo} delivered to {postCenter.uid}");
+                                ((SortingCenter)postCenter).inLine.Enqueue((timeSpan, message));
+                                Console.WriteLine($"Message from {message.directionFrom} to {message.directionTo} delivered to {postCenter.uid} at {timeSpan}");
                             }
                             postTransport.messageOnBoard.Remove(postCenter.uid);
                         }

@@ -84,6 +84,26 @@ namespace PostRunner
             shedule.Add(14, ("5", TransportAction.Unload));
             postWrapper.AddPostTransport(shedule);
 
+
+            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
+            shedule.Add(6, ("7", TransportAction.Load));
+            shedule.Add(12, ("5", TransportAction.Both));
+            shedule.Add(18, ("7", TransportAction.Unload));
+            postWrapper.AddPostTransport(shedule);
+
+            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
+            shedule.Add(6, ("7", TransportAction.Load));
+            shedule.Add(12, ("6", TransportAction.Both));
+            shedule.Add(18, ("7", TransportAction.Unload));
+            postWrapper.AddPostTransport(shedule);
+
+            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
+            shedule.Add(6, ("6", TransportAction.Load));
+            shedule.Add(10, ("3", TransportAction.Both));
+            shedule.Add(12, ("4", TransportAction.Both));
+            shedule.Add(14, ("6", TransportAction.Unload));
+            postWrapper.AddPostTransport(shedule);
+
             while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(5))
             {
             }

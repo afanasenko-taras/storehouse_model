@@ -20,7 +20,7 @@ namespace PostModel
         {
             PostCenter sc = (PostCenter)wrapper.getObject(sortingUid);
             sc.AddGate(directionUid);
-            Console.WriteLine($"{sc.uid} added gate to {directionUid} time {timeSpan}");
+            ((PostWrapper)wrapper).WriteDebug($"{sc.uid} added gate to {directionUid} time {timeSpan}");
         }
     }
 }

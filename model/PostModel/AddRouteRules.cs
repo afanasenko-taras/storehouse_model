@@ -23,7 +23,7 @@ namespace PostModel
         {
             PostCenter sc = (PostCenter)wrapper.getObject(sortingUid);
             sc.AddRoute(directionUid, gateUid);
-            Console.WriteLine($"PostCenter {sc.uid} added route rules {directionUid} send to gate {gateUid} time {timeSpan}");
+            ((PostWrapper)wrapper).WriteDebug($"PostCenter {sc.uid} added route rules {directionUid} send to gate {gateUid} time {timeSpan}");
         }
     }
 }

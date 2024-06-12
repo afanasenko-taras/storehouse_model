@@ -9,6 +9,14 @@ namespace PostModel
     {
 
 
+        public bool isDebug = false;
+
+        public void WriteDebug(string debug) 
+        {
+            if (isDebug)
+                Console.WriteLine(debug);
+        }
+
         public void AddPostOffice(string uid)
         {
             AddEvent(TimeSpan.Zero, new PostOfficeCreate(uid));

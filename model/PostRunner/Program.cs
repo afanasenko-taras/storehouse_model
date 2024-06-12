@@ -104,6 +104,7 @@ namespace PostRunner
             shedule.Add(14, ("6", TransportAction.Unload));
             postWrapper.AddPostTransport(shedule);
 
+            postWrapper.isDebug = true;
             while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(5))
             {
             }

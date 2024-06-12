@@ -19,7 +19,7 @@ namespace PostModel
         public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
             ((PostOffice)wrapper.getObject(fromUid)).AddMessage(timeSpan, toUid);
-            Console.WriteLine($"Message {fromUid} to {toUid} added at {timeSpan}");
+            ((PostWrapper)wrapper).WriteDebug($"Message {fromUid} to {toUid} added at {timeSpan}");
         }
     }
 }

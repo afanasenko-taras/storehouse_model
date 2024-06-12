@@ -18,7 +18,7 @@ namespace PostModel
         {
             PostTransport postTransport = new PostTransport(shedule);
             wrapper.addObject(postTransport);
-            Console.WriteLine($"postTransport {postTransport.uid} created {timeSpan}");
+            ((PostWrapper)wrapper).WriteDebug($"postTransport {postTransport.uid} created {timeSpan}");
         }
     }
 }

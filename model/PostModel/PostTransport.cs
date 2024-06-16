@@ -17,29 +17,29 @@ namespace PostModel
 
     class PostTransport : FastAbstractObject
     {
-        public Dictionary<int, (string postUid, TransportAction tAction)> shedule;
+        public Dictionary<long, (string postUid, TransportAction tAction)> shedule;
         public Dictionary<string, List<Message>> messageOnBoard = new Dictionary<string, List<Message>>();
 
-        public PostTransport(Dictionary<int, (string postUid, TransportAction tAction)> shedule)
+        public PostTransport(Dictionary<long, (string postUid, TransportAction tAction)> shedule)
         {
             this.shedule = shedule;
         }
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()
         {
-            int last_hour = this.lastUpdated.Hours;
-            foreach(var hour in shedule.Keys)
+            long last_tick = this.lastUpdated.Ticks - this.lastUpdated.Days * TimeSpan.TicksPerDay;
+            foreach(var tick in shedule.Keys)
             {
-                if (hour>last_hour)
+                if (tick > last_tick)
                 {
-                    return (TimeSpan.FromDays(lastUpdated.Days) + TimeSpan.FromHours(hour), 
-                        new PostTransportComing(this.uid, shedule[hour]));
+                    return (TimeSpan.FromDays(lastUpdated.Days) + TimeSpan.FromTicks(tick), 
+                        new PostTransportComing(this.uid, shedule[tick]));
                 }
             }
 
-            var hour1 = shedule.Keys.First();
-            return (TimeSpan.FromDays(lastUpdated.Days + 1) + TimeSpan.FromHours(hour1),
-                        new PostTransportComing(this.uid, shedule[hour1]));
+            var tick1 = shedule.Keys.First();
+            return (TimeSpan.FromDays(lastUpdated.Days + 1) + TimeSpan.FromTicks(tick1),
+                        new PostTransportComing(this.uid, shedule[tick1]));
 
         }
 

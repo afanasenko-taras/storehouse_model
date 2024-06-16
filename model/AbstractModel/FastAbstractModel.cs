@@ -30,6 +30,14 @@ namespace AbstractModel
         public TimeSpan updatedTime;
         private HashSet<string> objectsKeyForUpdate;
 
+        public bool isDebug = false;
+
+        public void WriteDebug(string debug)
+        {
+            if (isDebug)
+                Console.WriteLine(debug);
+        }
+
         public FastAbstractObject getObject(string key)
         {
             var obj = objects[key];

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using PostModel;
 
 namespace PostRunner
@@ -66,48 +68,64 @@ namespace PostRunner
             postWrapper.AddRoute("4", "2", "6");
 
 
-            postWrapper.AddMessage(TimeSpan.FromHours(1), "1", "2");
-            postWrapper.AddMessage(TimeSpan.FromHours(2), "1", "3");
-            postWrapper.AddMessage(TimeSpan.FromHours(20), "1", "4");
 
+            Dictionary<long, (string postUid, TransportAction tAction)> shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
 
-            Dictionary<int, (string postUid, TransportAction tAction)> shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
             
-            shedule.Add(10, ("5", TransportAction.Load));
-            shedule.Add(12, ("1", TransportAction.Both));
-            shedule.Add(14, ("5", TransportAction.Unload));
-            postWrapper.AddPostTransport(shedule);
+            int transportNumber = 30000;
+            Enumerable.Range(1, transportNumber).ToList().ForEach(transport =>
+            {
+                long tick = TimeSpan.TicksPerHour / transportNumber * transport;
 
-            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
-            shedule.Add(11, ("5", TransportAction.Load));
-            shedule.Add(13, ("2", TransportAction.Both));
-            shedule.Add(14, ("5", TransportAction.Unload));
-            postWrapper.AddPostTransport(shedule);
+                shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                shedule.Add(10 * TimeSpan.TicksPerHour + tick, ("5", TransportAction.Load));
+                shedule.Add(12 * TimeSpan.TicksPerHour + tick, ("1", TransportAction.Both));
+                shedule.Add(14 * TimeSpan.TicksPerHour + tick, ("5", TransportAction.Unload));
+                postWrapper.AddPostTransport(10 * transport, shedule);
+
+                shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                shedule.Add(11 * TimeSpan.TicksPerHour + tick, ("5", TransportAction.Load));
+                shedule.Add(13 * TimeSpan.TicksPerHour + tick, ("2", TransportAction.Both));
+                shedule.Add(14 * TimeSpan.TicksPerHour + tick, ("5", TransportAction.Unload));
+                postWrapper.AddPostTransport(10 * transport + 1, shedule);
 
 
-            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
-            shedule.Add(6, ("7", TransportAction.Load));
-            shedule.Add(12, ("5", TransportAction.Both));
-            shedule.Add(18, ("7", TransportAction.Unload));
-            postWrapper.AddPostTransport(shedule);
+                shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                shedule.Add(6 * TimeSpan.TicksPerHour + tick, ("7", TransportAction.Load));
+                shedule.Add(12 * TimeSpan.TicksPerHour + tick, ("5", TransportAction.Both));
+                shedule.Add(18 * TimeSpan.TicksPerHour + tick, ("7", TransportAction.Unload));
+                postWrapper.AddPostTransport(10 * transport + 2, shedule);
 
-            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
-            shedule.Add(6, ("7", TransportAction.Load));
-            shedule.Add(12, ("6", TransportAction.Both));
-            shedule.Add(18, ("7", TransportAction.Unload));
-            postWrapper.AddPostTransport(shedule);
+                shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                shedule.Add(6 * TimeSpan.TicksPerHour + tick, ("7", TransportAction.Load));
+                shedule.Add(12 * TimeSpan.TicksPerHour + tick, ("6", TransportAction.Both));
+                shedule.Add(18 * TimeSpan.TicksPerHour + tick, ("7", TransportAction.Unload));
+                postWrapper.AddPostTransport(10 * transport + 3, shedule);
 
-            shedule = new Dictionary<int, (string postUid, TransportAction tAction)>();
-            shedule.Add(6, ("6", TransportAction.Load));
-            shedule.Add(10, ("3", TransportAction.Both));
-            shedule.Add(12, ("4", TransportAction.Both));
-            shedule.Add(14, ("6", TransportAction.Unload));
-            postWrapper.AddPostTransport(shedule);
+                shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                shedule.Add(6 * TimeSpan.TicksPerHour + tick, ("6", TransportAction.Load));
+                shedule.Add(10 * TimeSpan.TicksPerHour + tick, ("3", TransportAction.Both));
+                shedule.Add(12 * TimeSpan.TicksPerHour + tick, ("4", TransportAction.Both));
+                shedule.Add(14 * TimeSpan.TicksPerHour + tick, ("6", TransportAction.Unload));
+                postWrapper.AddPostTransport(10 * transport + 4, shedule);
 
-            postWrapper.isDebug = true;
-            while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(5))
+            });
+
+
+            int dayNumber = 2;
+            int mailNumber = 100000;
+
+            postWrapper.GenerateTestMessages(dayNumber, mailNumber);
+
+            var sw = new Stopwatch();
+            sw.Start();
+            postWrapper.isDebug = false;
+            Console.WriteLine("Start!");
+            while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(dayNumber))
             {
             }
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
         }
     }
 }

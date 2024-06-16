@@ -19,7 +19,7 @@ namespace PostModel
             SortingCenter sortingCenter = new SortingCenter();
             sortingCenter.uid = this.uid;
             wrapper.addObject(sortingCenter);
-            ((PostWrapper)wrapper).WriteDebug($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated} time {timeSpan}");
+            wrapper.WriteDebug($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated} time {timeSpan}");
         }
 
     }

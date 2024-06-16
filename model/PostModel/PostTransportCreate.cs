@@ -7,8 +7,8 @@ namespace PostModel
 {
     class PostTransportCreate : FastAbstractEvent
     {
-        Dictionary<int, (string postUid, TransportAction tAction)> shedule;
-        public PostTransportCreate(Dictionary<int, (string postUid, TransportAction tAction)> shedule)
+        Dictionary<long, (string postUid, TransportAction tAction)> shedule;
+        public PostTransportCreate(Dictionary<long, (string postUid, TransportAction tAction)> shedule)
         {
             this.shedule = shedule;
         }
@@ -18,7 +18,7 @@ namespace PostModel
         {
             PostTransport postTransport = new PostTransport(shedule);
             wrapper.addObject(postTransport);
-            ((PostWrapper)wrapper).WriteDebug($"postTransport {postTransport.uid} created {timeSpan}");
+            wrapper.WriteDebug($"postTransport {postTransport.uid} created {timeSpan}");
         }
     }
 }

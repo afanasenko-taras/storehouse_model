@@ -19,7 +19,7 @@ namespace PostModel
             PostOffice postOffice = new PostOffice();
             postOffice.uid = this.uid;
             wrapper.addObject(postOffice);
-            ((PostWrapper)wrapper).WriteDebug($"postOffice {postOffice.uid} created {postOffice.lastUpdated}");
+            wrapper.WriteDebug($"postOffice {postOffice.uid} created {postOffice.lastUpdated}");
         }
     }
 }

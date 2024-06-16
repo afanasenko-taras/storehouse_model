@@ -9,14 +9,6 @@ namespace PostModel
     {
 
 
-        public bool isDebug = false;
-
-        public void WriteDebug(string debug) 
-        {
-            if (isDebug)
-                Console.WriteLine(debug);
-        }
-
         public void AddPostOffice(string uid)
         {
             AddEvent(TimeSpan.Zero, new PostOfficeCreate(uid));
@@ -42,9 +34,14 @@ namespace PostModel
             AddEvent(timeSpan, new AddMessage(fromUid, toUid));
         }
 
-        public void AddPostTransport(Dictionary<int, (string postUid, TransportAction tAction)> shedule)
+        public void AddPostTransport(long tick, Dictionary<long, (string postUid, TransportAction tAction)> shedule)
         {
-            AddEvent(TimeSpan.Zero, new PostTransportCreate(shedule));
+            AddEvent( new TimeSpan(tick), new PostTransportCreate(shedule));
+        }
+
+        public void GenerateTestMessages(int dayNumber, int mailNumber)
+        {
+            AddEvent(TimeSpan.Zero, new GenerateTestMessages(dayNumber, mailNumber));
         }
 
     }

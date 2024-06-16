@@ -11,7 +11,8 @@ namespace PostModel
     {
 
 
-        SortedList<TimeSpan, string> messageSource = new SortedList<TimeSpan, string>();
+        //SortedList<TimeSpan, string> messageSource = new SortedList<TimeSpan, string>();
+        SortedDictionary<TimeSpan, string> messageSource = new SortedDictionary<TimeSpan, string>();
 
         public void AddMessage(TimeSpan timeSpan, string toUid)
         {

@@ -8,25 +8,25 @@ namespace PostModel
     public class PostWrapper : FastAbstractWrapper
     {
 
-
+        TimeSpan lastAdd = TimeSpan.Zero;
         public void AddPostOffice(string uid)
         {
-            AddEvent(TimeSpan.Zero, new PostOfficeCreate(uid));
+            lastAdd = AddEvent(lastAdd, new PostOfficeCreate(uid));
         }
 
         public void AddSortingCenter(string uid)
         {
-            AddEvent(TimeSpan.Zero, new SortingCenterCreate(uid));
+            lastAdd = AddEvent(lastAdd, new SortingCenterCreate(uid));
         }
 
         public void CreateGate(string sortingCenterUid, string gateUid)
         {
-            AddEvent(TimeSpan.Zero, new GateCreate(sortingCenterUid, gateUid));
+            lastAdd = AddEvent(lastAdd, new GateCreate(sortingCenterUid, gateUid));
         }
 
         public void AddRoute(string sortingUid, string directionUid, string gateUid)
         {
-            AddEvent(TimeSpan.Zero, new AddRouteRules(sortingUid, directionUid, gateUid));
+            lastAdd = AddEvent(lastAdd, new AddRouteRules(sortingUid, directionUid, gateUid));
         }
 
         public void AddMessage(TimeSpan timeSpan, string fromUid, string toUid)
@@ -36,12 +36,12 @@ namespace PostModel
 
         public void AddPostTransport(long tick, Dictionary<long, (string postUid, TransportAction tAction)> shedule)
         {
-            AddEvent( new TimeSpan(tick), new PostTransportCreate(shedule));
+            AddEvent(new TimeSpan(tick), new PostTransportCreate(shedule));
         }
 
         public void GenerateTestMessages(int dayNumber, int mailNumber)
         {
-            AddEvent(TimeSpan.Zero, new GenerateTestMessages(dayNumber, mailNumber));
+            lastAdd = AddEvent(lastAdd, new GenerateTestMessages(dayNumber, mailNumber));
         }
 
     }

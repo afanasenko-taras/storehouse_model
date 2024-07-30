@@ -6,6 +6,9 @@ using System.Xml.Serialization;
 
 namespace AbstractModel
 {
+
+   
+
     public abstract class FastAbstractObject
     {
         public string uid = Guid.NewGuid().ToString();
@@ -30,12 +33,14 @@ namespace AbstractModel
         public TimeSpan updatedTime;
         private HashSet<string> objectsKeyForUpdate;
 
+        public Action<string> writeDebug = Console.WriteLine;
+
         public bool isDebug = false;
 
         public void WriteDebug(string debug)
         {
             if (isDebug)
-                Console.WriteLine(debug);
+                writeDebug(debug);
         }
 
         public FastAbstractObject getObject(string key)
@@ -46,7 +51,7 @@ namespace AbstractModel
             return objects[key];
         }
 
-        protected void AddEvent(TimeSpan timeSpan, FastAbstractEvent modelEvent, string objUid = null)
+        protected TimeSpan AddEvent(TimeSpan timeSpan, FastAbstractEvent modelEvent, string objUid = null)
         {
             while (eventList.ContainsKey(timeSpan))
             {
@@ -58,6 +63,7 @@ namespace AbstractModel
             {
                 objectsEventTime.Add(objUid, timeSpan);
             }
+            return timeSpan;
         }
 
         public bool Next()

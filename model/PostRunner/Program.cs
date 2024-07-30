@@ -1,25 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using PostModel;
+using YamlConverter;
 
 namespace PostRunner
 {
     class Program
     {
+
+
         static void Main(string[] args)
         {
+            string fileName = @"D:\post_front2\data\setup1.yaml";
+            
+            var sw = new Stopwatch();
+            sw.Start();
+            
+            var taskConfig = YamlConvert.DeserializeObject<TaskConfig>(File.ReadAllText(fileName));
             PostWrapper postWrapper = new PostWrapper();
-            postWrapper.AddPostOffice("1");
-            postWrapper.AddPostOffice("2");
-            postWrapper.AddPostOffice("3");
-            postWrapper.AddPostOffice("4");
-            postWrapper.AddSortingCenter("5");
-            postWrapper.AddSortingCenter("6");
-            postWrapper.AddSortingCenter("7");
+            foreach (var poj in taskConfig.PostObjects)
+            {
+                postWrapper.AddSortingCenter(poj.Index);
+                foreach(var gate in poj.Gates)
+                {
+                    postWrapper.CreateGate(poj.Index, gate);
+                }
+            }
 
 
+
+
+
+
+            /*
             postWrapper.CreateGate("5", "1");
             postWrapper.CreateGate("5", "2");
             postWrapper.CreateGate("5", "7");
@@ -112,20 +128,25 @@ namespace PostRunner
             });
 
 
-            int dayNumber = 2;
+            
             int mailNumber = 100000;
 
             postWrapper.GenerateTestMessages(dayNumber, mailNumber);
 
-            var sw = new Stopwatch();
-            sw.Start();
-            postWrapper.isDebug = false;
+
+            */
+            int dayNumber = 2;
+            postWrapper.isDebug = true;
             Console.WriteLine("Start!");
+
+            StreamWriter outputFile = new StreamWriter("Post.log");
+            postWrapper.writeDebug = outputFile.WriteLine;
             while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(dayNumber))
             {
             }
             sw.Stop();
             Console.WriteLine(sw.Elapsed);
+            outputFile.Close();
         }
     }
 }

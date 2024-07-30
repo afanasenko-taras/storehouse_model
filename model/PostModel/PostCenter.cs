@@ -11,7 +11,8 @@ namespace PostModel
 
         public void AddGate(string gateUid)
         {
-            gates.Add(gateUid, new List<Message>());
+            if (!gates.ContainsKey(gateUid))
+                gates.Add(gateUid, new List<Message>());
         }
 
 

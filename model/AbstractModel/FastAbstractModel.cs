@@ -34,6 +34,7 @@ namespace AbstractModel
         private HashSet<string> objectsKeyForUpdate;
 
         public Action<string> writeDebug = Console.WriteLine;
+        public Action<string> writeError = Console.WriteLine;
 
         public bool isDebug = false;
 
@@ -41,6 +42,11 @@ namespace AbstractModel
         {
             if (isDebug)
                 writeDebug(debug);
+        }
+
+        public List<string> getObjectKeys()
+        {
+            return objects.Keys.ToList();
         }
 
         public FastAbstractObject getObject(string key)

@@ -21,7 +21,7 @@ namespace PostModel
             PostTransport postTransport = (PostTransport)wrapper.getObject(postTransportUid);
             PostCenter postCenter = (PostCenter)wrapper.getObject(postAction.postUid);
             wrapper.WriteDebug($"Transport {postTransport.uid} is comming to {postAction.postUid} at {timeSpan} for {postAction.tAction}");
-
+            PostWrapper pw = (PostWrapper)wrapper;
             //Need load from all gates for transport with shedule
             if (postAction.tAction == TransportAction.Load || postAction.tAction == TransportAction.Both)
             {
@@ -40,6 +40,7 @@ namespace PostModel
 
                         wrapper.WriteDebug($"Transport {postTransport.uid} get at {postCenter.lastUpdated} from {postCenter.uid} to {shedule.Value.postUid} messeges count {postCenter.gates[shedule.Value.postUid].Count}");
                         postTransport.messageOnBoard[shedule.Value.postUid].AddRange(postCenter.gates[shedule.Value.postUid]);
+                        pw.MessageLogTransport(postCenter.gates[shedule.Value.postUid], timeSpan, postCenter.uid, postTransport.uid, "LoadOnTransport");
                         postCenter.gates[shedule.Value.postUid] = new List<Message>();
                         
                     }
@@ -53,6 +54,8 @@ namespace PostModel
                         if (postCenter is PostOffice)
                         {
                             wrapper.WriteDebug($"!!!!!Message number {postTransport.messageOnBoard[postCenter.uid].Count} delivered to {postCenter.uid} at {timeSpan}");
+                            pw.MessageLogTransport(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, postTransport.uid, "UnloadFromTransport");
+                            pw.MessageLogDelivered(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, "Delivered");
                             postTransport.messageOnBoard.Remove(postCenter.uid);
                         }
                         if (postCenter is SortingCenter)
@@ -63,6 +66,8 @@ namespace PostModel
                                 sortingCenter.inLine.Enqueue((timeSpan, message));
                             }
                             wrapper.WriteDebug($"Message count {postTransport.messageOnBoard[postCenter.uid].Count} delivered to {postCenter.uid} at {timeSpan}");
+                            pw.MessageLogTransport(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, postTransport.uid, "UnloadFromTransport");
+                            pw.MessageLogDelivered(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, "Delivered");
                             postTransport.messageOnBoard.Remove(postCenter.uid);
                         }
                     }

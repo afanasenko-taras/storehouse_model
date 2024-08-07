@@ -9,6 +9,7 @@ namespace PostModel
     {
 
         public Queue<(TimeSpan exitTime, Message message)> inLine = new Queue<(TimeSpan exitTime, Message message)>();
+        internal FastAbstractWrapper wrapper;
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()
         {
@@ -19,11 +20,15 @@ namespace PostModel
         {
             lastUpdated = timeSpan;
             (TimeSpan exitTime, Message message) msg;
-            int count = 0;
             while(inLine.TryPeek(out msg) & msg.exitTime + TimeSpan.FromHours(4) < lastUpdated)
             {
+                if (!routeTable.ContainsKey(msg.message.directionTo))
+                {
+                    inLine.Dequeue();
+                    msg.message.log.Add(new MessageLog(timeSpan, uid, "", "NoRouterFound"));
+                    continue;
+                }
                 gates[routeTable[msg.message.directionTo]].Add(msg.message);
-                count++;
                 inLine.Dequeue();
             }
         }

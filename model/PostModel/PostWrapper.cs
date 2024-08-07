@@ -7,7 +7,7 @@ namespace PostModel
 {
     public class PostWrapper : FastAbstractWrapper
     {
-
+        public List<Message> messages = new List<Message>();
         TimeSpan lastAdd = TimeSpan.Zero;
         public void AddPostOffice(string uid)
         {
@@ -34,9 +34,9 @@ namespace PostModel
             AddEvent(timeSpan, new AddMessage(fromUid, toUid));
         }
 
-        public void AddPostTransport(long tick, Dictionary<long, (string postUid, TransportAction tAction)> shedule)
+        public void AddPostTransport(Dictionary<long, (string postUid, TransportAction tAction)> shedule)
         {
-            AddEvent(new TimeSpan(tick), new PostTransportCreate(shedule));
+            lastAdd = AddEvent(lastAdd, new PostTransportCreate(shedule));
         }
 
         public void GenerateTestMessages(int dayNumber, int mailNumber)
@@ -44,5 +44,45 @@ namespace PostModel
             lastAdd = AddEvent(lastAdd, new GenerateTestMessages(dayNumber, mailNumber));
         }
 
+        public void GenerateFullMessages(TaskConfig taskConfig, Dictionary<string, Dictionary<string, InData>> inData)
+        {
+            lastAdd = AddEvent(lastAdd, new GenerateFullMessage(taskConfig, inData));
+        }
+
+
+        public void ForceUpdate(TimeSpan timeSpan)
+        {
+            AddEvent(timeSpan, new ForceUpdate());
+        }
+
+        public void ForceFinish(TimeSpan timeSpan)
+        {
+            AddEvent(timeSpan, new ForceFinish());
+        }
+
+        internal void MessageLogTransport(List<Message> messages, TimeSpan timeSpan, string post_uid, string transport_uid, string action)
+        {
+            foreach(var msg in messages)
+            {
+                msg.log.Add(new MessageLog(timeSpan, post_uid, transport_uid, action));
+            }
+        }
+
+        internal void MessageLogPost(List<Message> messages, TimeSpan timeSpan, string post_uid, string action)
+        {
+            foreach (var msg in messages)
+            {
+                msg.log.Add(new MessageLog(timeSpan, post_uid, "", action));
+            }
+        }
+
+        internal void MessageLogDelivered(List<Message> messages, TimeSpan timeSpan, string post_uid, string action)
+        {
+            foreach (var msg in messages)
+            {
+                if (msg.directionTo == post_uid)
+                    msg.log.Add(new MessageLog(timeSpan, post_uid, "", action));
+            }
+        }
     }
 }

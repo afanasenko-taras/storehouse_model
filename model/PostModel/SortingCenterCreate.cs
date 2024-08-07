@@ -17,6 +17,7 @@ namespace PostModel
         public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
             SortingCenter sortingCenter = new SortingCenter();
+            sortingCenter.wrapper = wrapper;
             sortingCenter.uid = this.uid;
             wrapper.addObject(sortingCenter);
             wrapper.WriteDebug($"sortingCenter {sortingCenter.uid} created {sortingCenter.lastUpdated} time {timeSpan}");

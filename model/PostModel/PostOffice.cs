@@ -10,8 +10,6 @@ namespace PostModel
     class PostOffice : PostCenter
     {
 
-
-        //SortedList<TimeSpan, string> messageSource = new SortedList<TimeSpan, string>();
         SortedDictionary<TimeSpan, string> messageSource = new SortedDictionary<TimeSpan, string>();
 
         public void AddMessage(TimeSpan timeSpan, string toUid)

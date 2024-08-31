@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using AbstractModel;
 using PostModel;
 using YamlConverter;
@@ -19,12 +20,15 @@ namespace PostRunner
             
             var sw = new Stopwatch();
             sw.Start();
-            
+
             var taskConfig = YamlConvert.DeserializeObject<TaskConfig>(File.ReadAllText(fileName));
+            //taskConfig.InDates = null;
+            //Helper.FileSerialize(taskConfig, @"D:\PR\buffer\taskConfig.bnr");
+            //return;
+
             PostWrapper postWrapper = new PostWrapper();
             Dictionary<string, string> id2index = new Dictionary<string, string>();
             Dictionary<string, PostObject> id2poj = new Dictionary<string, PostObject>();
-            Dictionary<string, Dictionary<string, InData>> inData = new Dictionary<string, Dictionary<string, InData>>();
             Dictionary<long, (string start_id, string end_id, double time, double distance)> bones = new Dictionary<long, (string start_id, string end_id, double time, double distance)>();
             foreach (var poj in taskConfig.PostObjects)
             {
@@ -32,13 +36,10 @@ namespace PostRunner
                 id2poj.Add(poj.Id, poj);
             }
 
-            foreach(var ind in taskConfig.InDates)
-            {
-                if (!inData.ContainsKey(ind.StartIndex))
-                    inData.Add(ind.StartIndex, new Dictionary<string, InData>());
-                if (!inData[ind.StartIndex].ContainsKey(ind.EndIndex))
-                    inData[ind.StartIndex].Add(ind.EndIndex, ind);
-            }
+            //Graph gr = new Graph(taskConfig, id2index, id2poj);
+            //File.WriteAllBytes("post-zone-a-and-b_v2.xml", Helper.SerializeXML(gr));
+            //return;
+
 
             foreach (var poj in taskConfig.PostObjects)
             {
@@ -47,9 +48,16 @@ namespace PostRunner
                 {
                     postWrapper.CreateGate(poj.Index, id2index[gate]);
                 }
-                foreach (var route in poj.Route)
+                foreach (var rules in poj.Route)
                 {
-                    postWrapper.AddRoute(poj.Index, id2index[route.Key], id2index[route.Value]);
+                    string msgType = rules.Key;
+                    foreach (var route in rules.Value)
+                    {
+                        if (route.Value is null)
+                            postWrapper.AddRoute(poj.Index, id2index[route.Key], null, msgType);
+                        else 
+                            postWrapper.AddRoute(poj.Index, id2index[route.Key], id2index[route.Value], msgType);
+                    }
                 }
             }
 
@@ -62,9 +70,13 @@ namespace PostRunner
             foreach(var tr in taskConfig.TransportRoutes)
             {
                 Dictionary<long, (string postUid, TransportAction tAction)> shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
-                var bone = bones[tr.Shedule["1"]];
-                shedule.Add((long)(tr.StartTime * TimeSpan.TicksPerHour + tr.Id), (id2index[bone.start_id], TransportAction.Load));
-                shedule.Add((long)((tr.StartTime + 1) * TimeSpan.TicksPerHour + tr.Id), (id2index[bone.end_id], TransportAction.Unload));
+                foreach (var sh in tr.Shedule)
+                {
+                    var number = int.Parse(sh.Key);
+                    var bone = bones[sh.Value];
+                    shedule.Add((long)((tr.StartTime + number - 1) * TimeSpan.TicksPerHour + tr.Id * 100 + number), (id2index[bone.start_id], TransportAction.Both));
+                    shedule.Add((long)((tr.StartTime + number) * TimeSpan.TicksPerHour + tr.Id * 150 + number), (id2index[bone.end_id], TransportAction.Both));
+                }
                 postWrapper.AddPostTransport(shedule);
             }
 
@@ -75,7 +87,8 @@ namespace PostRunner
             postWrapper.isDebug = true;
             Console.WriteLine("Start!");
 
-            postWrapper.GenerateFullMessages(taskConfig, inData);
+            //postWrapper.GenerateFullMessages(taskConfig, inData);
+            postWrapper.GenerateTeraplan(taskConfig);
             postWrapper.ForceUpdate(TimeSpan.FromHours(8));
             postWrapper.ForceFinish(TimeSpan.FromDays(dayNumber-1)+ TimeSpan.FromHours(23));
 
@@ -90,7 +103,7 @@ namespace PostRunner
             Console.WriteLine(sw.Elapsed);
             outputFile.Close();
             errorFile.Close();
-            File.WriteAllBytes("POST-Messages-Log.xml", Helper.SerializeXML(postWrapper.messages));
+            File.WriteAllBytes("POST-Messages-Log-700K-Filtered.xml", Helper.SerializeXML(postWrapper.messages));
         }
     }
 }

@@ -30,6 +30,11 @@ namespace PostRunner
 
 		[XmlAttribute(AttributeName = "geo_lon")]
 		public double GeoLon { get; set; }
+
+		[XmlAttribute(AttributeName = "type")]
+		public string Type { get; set; }
+
+
 	}
 
 	[XmlRoot(ElementName = "edge")]
@@ -50,17 +55,21 @@ namespace PostRunner
 
 		[XmlAttribute(AttributeName = "label")]
 		public string Label { get; set; }
+
+		[XmlAttribute(AttributeName = "type")]
+		public string Type { get; set; }
 	}
 
 	[XmlRoot(ElementName = "graph")]
 	public class Graph
 	{
+		public Graph() { }
 		public Graph(TaskConfig taskConfig, Dictionary<string, string> id2index, Dictionary<string, PostObject> id2poj)
         {
 			Graph gr = this;
 			gr.Node = new List<Node>();
 			gr.Edge = new List<Edge>();
-			gr.FileName = "graphs/zone_b";
+			gr.FileName = "graphs/zone_a_b";
 			gr.Rankdir = "LR";
 			foreach (var poj in taskConfig.PostObjects)
 			{
@@ -74,20 +83,19 @@ namespace PostRunner
 					nd.Name = poj.Name;
 					nd.GeoLat = poj.GeoLat;
 					nd.GeoLon = poj.GeoLon;
+					nd.Type = poj.SuType;
 					gr.Node.Add(nd);
-					foreach (var gate in poj.Gates)
-					{
-						if (true | id2poj[gate].SuType == "B")
-						{
-							Edge edge = new Edge();
-							edge.From = poj.Index;
-							edge.To = id2index[gate];
-							edge.Fontname = "Arial";
-							edge.Fontsize = 9;
-							gr.Edge.Add(edge);
-						}
-					}
 				}
+			}
+			foreach (var tb in taskConfig.TransportBones)
+			{
+				Edge edge = new Edge();
+				edge.From = id2index[tb.Start_id];
+				edge.To = id2index[tb.End_id];
+				edge.Fontname = "Arial";
+				edge.Fontsize = 9;
+				edge.Type = tb.Type;
+				gr.Edge.Add(edge);
 			}
 			//File.WriteAllBytes("zone_a_and_b.xml", Helper.SerializeXML(gr));
 			//return;

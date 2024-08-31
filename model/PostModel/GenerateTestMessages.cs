@@ -37,7 +37,7 @@ namespace PostModel
                     long tick = TimeSpan.TicksPerDay * day +
                         TimeSpan.TicksPerHour * 8 +
                         (8 * TimeSpan.TicksPerHour / mailNumber) * mail;
-
+                    /*
                     offices["1"].AddMessage(new TimeSpan(tick+0), "2");
                     offices["1"].AddMessage(new TimeSpan(tick+1), "3");
                     offices["1"].AddMessage(new TimeSpan(tick+2), "4");
@@ -53,7 +53,7 @@ namespace PostModel
                     offices["4"].AddMessage(new TimeSpan(tick + 9), "1");
                     offices["4"].AddMessage(new TimeSpan(tick + 10), "2");
                     offices["4"].AddMessage(new TimeSpan(tick + 11), "3");
-
+                    */
                 });
             });
             sw1.Stop();

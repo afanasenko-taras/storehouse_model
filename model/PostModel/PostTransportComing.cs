@@ -60,14 +60,17 @@ namespace PostModel
                         }
                         if (postCenter is SortingCenter)
                         {
-                            SortingCenter sortingCenter = ((SortingCenter)postCenter);
-                            foreach (var message in postTransport.messageOnBoard[postCenter.uid])
-                            {
-                                sortingCenter.inLine.Enqueue((timeSpan, message));
-                            }
                             wrapper.WriteDebug($"Message count {postTransport.messageOnBoard[postCenter.uid].Count} delivered to {postCenter.uid} at {timeSpan}");
                             pw.MessageLogTransport(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, postTransport.uid, "UnloadFromTransport");
                             pw.MessageLogDelivered(postTransport.messageOnBoard[postCenter.uid], timeSpan, postCenter.uid, "Delivered");
+                            
+                            SortingCenter sortingCenter = ((SortingCenter)postCenter);
+                            foreach (var message in postTransport.messageOnBoard[postCenter.uid])
+                            {
+                                if (message.directionTo != postTransport.uid)
+                                    sortingCenter.inLine.Enqueue((timeSpan, message));
+                            }
+
                             postTransport.messageOnBoard.Remove(postCenter.uid);
                         }
                     }

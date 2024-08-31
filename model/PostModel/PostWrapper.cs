@@ -24,14 +24,14 @@ namespace PostModel
             lastAdd = AddEvent(lastAdd, new GateCreate(sortingCenterUid, gateUid));
         }
 
-        public void AddRoute(string sortingUid, string directionUid, string gateUid)
+        public void AddRoute(string sortingUid, string directionUid, string? gateUid, string typeMsg)
         {
-            lastAdd = AddEvent(lastAdd, new AddRouteRules(sortingUid, directionUid, gateUid));
+            lastAdd = AddEvent(lastAdd, new AddRouteRules(sortingUid, directionUid, gateUid, typeMsg));
         }
 
-        public void AddMessage(TimeSpan timeSpan, string fromUid, string toUid)
+        public void AddMessage(TimeSpan timeSpan, Message message)
         {
-            AddEvent(timeSpan, new AddMessage(fromUid, toUid));
+            AddEvent(timeSpan, new AddMessage(message));
         }
 
         public void AddPostTransport(Dictionary<long, (string postUid, TransportAction tAction)> shedule)
@@ -47,6 +47,11 @@ namespace PostModel
         public void GenerateFullMessages(TaskConfig taskConfig, Dictionary<string, Dictionary<string, InData>> inData)
         {
             lastAdd = AddEvent(lastAdd, new GenerateFullMessage(taskConfig, inData));
+        }
+
+        public void GenerateTeraplan(TaskConfig taskConfig)
+        {
+            lastAdd = AddEvent(lastAdd, new GenerateTeraplan(taskConfig));
         }
 
 
@@ -81,7 +86,9 @@ namespace PostModel
             foreach (var msg in messages)
             {
                 if (msg.directionTo == post_uid)
+                {
                     msg.log.Add(new MessageLog(timeSpan, post_uid, "", action));
+                }
             }
         }
     }

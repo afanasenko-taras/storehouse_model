@@ -10,11 +10,11 @@ namespace PostModel
     class PostOffice : PostCenter
     {
 
-        SortedDictionary<TimeSpan, string> messageSource = new SortedDictionary<TimeSpan, string>();
+        SortedDictionary<TimeSpan, Message> messageSource = new SortedDictionary<TimeSpan, Message>();
 
-        public void AddMessage(TimeSpan timeSpan, string toUid)
+        public void AddMessage(TimeSpan timeSpan, Message message)
         {
-            messageSource.Add(timeSpan, toUid);
+            messageSource.Add(timeSpan, message);
         }
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()
@@ -31,7 +31,7 @@ namespace PostModel
             while (message.Key < lastUpdated)
             {
                 messageSource.Remove(message.Key);
-                gates[routeTable[message.Value]].Add(new Message(this.uid, message.Value));
+                gates[routeTable[message.Value.typeMsg][message.Value.directionTo]].Add(message.Value);
                 if (messageSource.Count == 0)
                     break;
                 message = messageSource.First();

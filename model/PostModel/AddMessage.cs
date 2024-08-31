@@ -7,19 +7,18 @@ namespace PostModel
 {
     class AddMessage : FastAbstractEvent
     {
-        string fromUid;
-        string toUid;
+        Message message;
 
-        public AddMessage(string fromUid, string toUid)
+        public AddMessage(Message message)
         {
-            this.fromUid = fromUid;
-            this.toUid = toUid;
+            this.message = message;
         }
 
         public override void runEvent(FastAbstractWrapper wrapper, TimeSpan timeSpan)
         {
-            ((PostOffice)wrapper.getObject(fromUid)).AddMessage(timeSpan, toUid);
-            wrapper.WriteDebug($"Message {fromUid} to {toUid} added at {timeSpan}");
+
+            ((PostOffice)wrapper.getObject(message.directionFrom)).AddMessage(timeSpan, message);
+            wrapper.WriteDebug($"Message {message.directionFrom} to {message.directionTo} added at {timeSpan}");
         }
     }
 }

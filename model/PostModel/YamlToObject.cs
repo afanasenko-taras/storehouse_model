@@ -7,6 +7,7 @@ using Newtonsoft.Json.Converters;
 
 namespace PostModel
 {
+    [Serializable]
     public partial class TaskConfig
     {
         [JsonProperty("post_objects")]
@@ -25,6 +26,7 @@ namespace PostModel
         public InData[] InDates { get; set; }
     }
 
+    [Serializable]
     public partial class TransportRoute
     {
         [JsonProperty("id")]
@@ -37,6 +39,7 @@ namespace PostModel
         public double StartTime { get; set; }
     }
 
+    [Serializable]
     public class TransportBone
     {
         [JsonProperty("id")]
@@ -53,18 +56,34 @@ namespace PostModel
 
         [JsonProperty("distance")]
         public double Distance { get; set; }
+
+        [JsonProperty("price")]
+        public double Price { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
     }
 
+    [Serializable]
     public partial class PostObject
     {
+        [JsonProperty("fix_price")]
+        public long FixPrice { get; set; }
+
         [JsonProperty("gates")]
         public string[] Gates { get; set; }
 
+        [JsonProperty("geo_lat")]
+        public double GeoLat { get; set; }
+
+        [JsonProperty("geo_lon")]
+        public double GeoLon { get; set; }
+
+        [JsonProperty("hour_price")]
+        public double HourPrice { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
-
-        [JsonProperty("pid")]
-        public string Pid { get; set; }
 
         [JsonProperty("index")]
         public string Index { get; set; }
@@ -72,29 +91,22 @@ namespace PostModel
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("route")]
-        public System.Collections.Generic.Dictionary<string, string> Route { get; set; }
+        [JsonProperty("pid")]
+        public long Pid { get; set; }
 
-        [JsonProperty("typepostoffice_id")]
-        public long TypepostofficeId { get; set; }
+        [JsonProperty("route")]
+        public Dictionary<string, Dictionary<string, string?>> Route { get; set; }
 
         [JsonProperty("su_type")]
         public string SuType { get; set; }
 
-        [JsonProperty("geo_lat")]
-        public double GeoLat { get; set; }
-
-
-        [JsonProperty("geo_lon")]
-        public double GeoLon { get; set; }
-
+        [JsonProperty("typepostoffice_id")]
+        public long TypepostofficeId { get; set; }
     }
 
+    [Serializable]
     public partial class InData
     {
-        [JsonProperty("start_index")]
-        public string StartIndex { get; set; }
-
         [JsonProperty("end_index")]
         public string EndIndex { get; set; }
 
@@ -105,12 +117,22 @@ namespace PostModel
         public string Id { get; set; }
 
         [JsonProperty("ks")]
-        public double Ks { get; set; }
+        public long Ks { get; set; }
+
+        [JsonProperty("start_index")]
+        public string StartIndex { get; set; }
+
+        [JsonProperty("type_message_id")]
+        public string TypeMessageId { get; set; }
 
         [JsonProperty("weight")]
         public double Weight { get; set; }
+
+        [JsonProperty("weight_result")]
+        public double WeightResult { get; set; }
     }
 
+    [Serializable]
     public partial class Version
     {
         [JsonProperty("description")]

@@ -38,7 +38,7 @@ namespace PostModel
                     if (inData.ContainsKey(poj1.Index) && inData[poj1.Index].ContainsKey(poj2.Index))
                         in_teraplan = true;
 
-                    Message msg = new Message(poj1.Index, poj2.Index, in_teraplan);
+                    Message msg = new Message(poj1.Index, poj2.Index, "1", "", in_teraplan);
                     msg.log.Add(new MessageLog(timeSpan, poj1.Index, "", "Created"));
                     pw.messages.Add(msg);
                     su[poj1.Index].inLine.Enqueue((TimeSpan.FromSeconds(10), msg));

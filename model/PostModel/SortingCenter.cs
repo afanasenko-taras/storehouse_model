@@ -22,13 +22,19 @@ namespace PostModel
             (TimeSpan exitTime, Message message) msg;
             while(inLine.TryPeek(out msg) & msg.exitTime + TimeSpan.FromHours(4) < lastUpdated)
             {
-                if (!routeTable.ContainsKey(msg.message.directionTo))
+                if (!routeTable.ContainsKey(msg.message.typeMsg) || !routeTable[msg.message.typeMsg].ContainsKey(msg.message.directionTo))
                 {
-                    inLine.Dequeue();
                     msg.message.log.Add(new MessageLog(timeSpan, uid, "", "NoRouterFound"));
-                    continue;
                 }
-                gates[routeTable[msg.message.directionTo]].Add(msg.message);
+                else if (routeTable[msg.message.typeMsg][msg.message.directionTo] is null)
+                {
+                    msg.message.log.Add(new MessageLog(timeSpan, uid, "", "Local"));
+                }
+                else
+                {
+                    gates[routeTable[msg.message.typeMsg][msg.message.directionTo]].Add(msg.message);
+                    msg.message.log.Add(new MessageLog(timeSpan, uid, "", $"Sorted to - {routeTable[msg.message.typeMsg][msg.message.directionTo]}"));
+                }
                 inLine.Dequeue();
             }
         }

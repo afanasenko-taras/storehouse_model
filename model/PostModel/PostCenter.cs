@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PostModel
 {
-    abstract class PostCenter : FastAbstractObject
+    public abstract class PostCenter : FastAbstractObject
     {
         public Dictionary<string, List<Message>> gates = new Dictionary<string, List<Message>>();
 
@@ -16,11 +16,14 @@ namespace PostModel
         }
 
 
-        protected Dictionary<string, string> routeTable = new Dictionary<string, string>();
+        protected Dictionary<string, Dictionary<string, string>> routeTable = new Dictionary<string, Dictionary<string, string>>();
 
-        public void AddRoute(string directionUid, string gateUid)
+        public void AddRoute(string directionUid, string gateUid, string typeMsg)
         {
-            routeTable.Add(directionUid, gateUid);
+            if (!routeTable.ContainsKey(typeMsg))
+                routeTable.Add(typeMsg, new Dictionary<string, string>());
+
+            routeTable[typeMsg].Add(directionUid, gateUid);
         }
     }
 }

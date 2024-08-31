@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntControlModel", "AntContr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostModel", "PostModel\PostModel.csproj", "{6C721FF1-AEE4-491F-BEF3-F4572AFC8527}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostRunner", "PostRunner\PostRunner.csproj", "{C2E1581F-56D0-47E6-8E2E-17B9A20F6FA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostRunner", "PostRunner\PostRunner.csproj", "{C2E1581F-56D0-47E6-8E2E-17B9A20F6FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostOptimizer", "PostOptimizer\PostOptimizer.csproj", "{C5F83277-1C32-41BB-A6DB-AF6212C7970F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{C2E1581F-56D0-47E6-8E2E-17B9A20F6FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2E1581F-56D0-47E6-8E2E-17B9A20F6FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2E1581F-56D0-47E6-8E2E-17B9A20F6FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5F83277-1C32-41BB-A6DB-AF6212C7970F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5F83277-1C32-41BB-A6DB-AF6212C7970F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5F83277-1C32-41BB-A6DB-AF6212C7970F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5F83277-1C32-41BB-A6DB-AF6212C7970F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

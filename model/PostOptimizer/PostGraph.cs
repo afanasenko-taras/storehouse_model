@@ -34,25 +34,43 @@ namespace PostOptimizer
         }
 
 
+        private void AddWays(Dictionary<string, Dictionary<string, (double price, LinkedList<TransportBone> link)>> ways, 
+            string node_from, string node_to, double price, LinkedList<TransportBone> link)
+        {
+            if (!ways[node_from].ContainsKey(node_to))
+                ways[node_from].Add(node_to, (double.PositiveInfinity, null));
+
+            if (ways[node_from][node_to].price > price)
+            {
+                ways[node_from][node_to] = (price, link);
+            }
+        }
+
         public void RunOptimizeDeystra()
         {
-            Dictionary<string, Dictionary<string, LinkedList<TransportBone>>> ways = new Dictionary<string, Dictionary<string, LinkedList<TransportBone>>>();
+
+
+            Dictionary<string, Dictionary<string, (double price, LinkedList<TransportBone> link)>> ways =
+                new Dictionary<string, Dictionary<string, (double price, LinkedList<TransportBone> link)>>();
 
             foreach(var node_from in nodes)
             {
-                ways.Add(node_from.Key, new Dictionary<string, LinkedList<TransportBone>>());
                 var current_node = node_from.Key;
+                if (!ways.ContainsKey(current_node))
+                    ways.Add(current_node, new Dictionary<string, (double price, LinkedList<TransportBone> link)>());
                 foreach (var node_to in nodes)
                 {
                     LinkedList<TransportBone> curent_link = new LinkedList<TransportBone>();
-                    Dictionary<double, LinkedList<TransportBone>> graph = new Dictionary<double, LinkedList<TransportBone>>();
+                    double price = double.PositiveInfinity; 
+                    SortedDictionary<double, LinkedList<TransportBone>> graph = new SortedDictionary<double, LinkedList<TransportBone>>();
                     graph.Add(0, new LinkedList<TransportBone>());
-                    while (current_node!=node_to.Key & graph.Count!=0)
+                    while (graph.Count!=0)
                     {
                         var first = graph.First();
                         graph.Remove(first.Key);
-                        var weight = first.Key;
+                        price = first.Key;
                         var list = first.Value;
+
                         if (list.Count == 0)
                             current_node = node_from.Key;
                         else
@@ -61,25 +79,52 @@ namespace PostOptimizer
                             curent_link = list;
                         }
 
-                        if (ways.ContainsKey(current_node) && ways[current_node].ContainsKey(node_to.Key))
+                        if (node_to.Key == current_node)
+                            AddWays(ways, node_from.Key, node_to.Key, price, curent_link);
 
-                        if (edges.ContainsKey(current_node)) {
-                            foreach (var edge_add in edges[current_node])
+
+                        if (!ways.ContainsKey(current_node))
+                            ways.Add(current_node, new Dictionary<string, (double price, LinkedList<TransportBone> link)>());
+
+                        if (ways[current_node].ContainsKey(node_to.Key)) {
+                            double sum_price = ways[node_from.Key][node_to.Key].price + price;
+                            if (ways[node_from.Key].ContainsKey(node_to.Key)) {
+                                if (ways[node_from.Key][node_to.Key].price <= sum_price)
+                                    continue;
+                            }
+
+                            LinkedList<TransportBone> new_link = new LinkedList<TransportBone>();
+                            foreach (var edge in curent_link)
                             {
-                                LinkedList<TransportBone> new_link = new LinkedList<TransportBone>();
-                                foreach (var edge in curent_link)
+                                new_link.AddLast(edge);
+                            }
+                            foreach (var edge in ways[node_from.Key][node_to.Key].link)
+                            {
+                                new_link.AddLast(edge);
+                            }
+                            ways[node_from.Key][node_to.Key] = (sum_price, new_link);
+                        } else
+                        {
+                            if (edges.ContainsKey(current_node))
+                            {
+                                foreach (var edge_add in edges[current_node])
                                 {
-                                    new_link.AddLast(edge);
+                                    LinkedList<TransportBone> new_link = new LinkedList<TransportBone>();
+                                    foreach (var edge in curent_link)
+                                    {
+                                        new_link.AddLast(edge);
+                                    }
+                                    new_link.AddLast(edge_add);
+                                    graph.Add(price + edge_add.Price, new_link);
                                 }
-                                new_link.AddLast(edge_add);
-                                graph.Add(weight + edge_add.Price, new_link);
                             }
                         }
+
                     }
                     if (current_node == node_to.Key)
-                        ways[node_from.Key].Add(node_to.Key, curent_link);
-                    else
-                        ways[node_from.Key].Add(node_to.Key, null); 
+                        if (ways[node_from.Key][node_to.Key].price > price)
+                            ways[node_from.Key][node_to.Key] = (price, curent_link);
+
                 }
             }
 
@@ -95,9 +140,9 @@ namespace PostOptimizer
             {
                 foreach (var w in way.Value)
                 {
-                    Console.WriteLine($"{way.Key} {w.Key} path {(w.Value is null ? "NoWay" : w.Value.Count)}");
-                    if (!(w.Value is null))
-                        foreach(var transportBone in w.Value)
+                    Console.WriteLine($"{way.Key} {w.Key} path {(w.Value.link is null ? "NoWay" : w.Value.link.Count)}");
+                    if (!(w.Value.link is null))
+                        foreach(var transportBone in w.Value.link)
                         {
                             setTranspotBone.Add(transportBone);
                         }

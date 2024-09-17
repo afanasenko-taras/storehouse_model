@@ -83,7 +83,7 @@ namespace PostRunner
 
 
 
-            int dayNumber = 30;
+            int dayNumber = 3;
             postWrapper.isDebug = true;
             Console.WriteLine("Start!");
 
@@ -103,7 +103,7 @@ namespace PostRunner
             Console.WriteLine(sw.Elapsed);
             outputFile.Close();
             errorFile.Close();
-            File.WriteAllBytes("POST-Messages-Log-700K-Filtered.xml", Helper.SerializeXML(postWrapper.messages));
+            File.WriteAllBytes("POST-Messages-Log-700K-Alt.xml", Helper.SerializeXML(postWrapper.messages));
         }
     }
 }

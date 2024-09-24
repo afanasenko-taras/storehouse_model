@@ -16,25 +16,23 @@ namespace PostRunner
 
         static void Main(string[] args)
         {
-            string fileName = @"D:\post_front2\data\POST-setup.yaml";
+            string fileName = @"D:\post_front2\data\POST-setup-full.yaml";
             
             var sw = new Stopwatch();
             sw.Start();
 
             var taskConfig = YamlConvert.DeserializeObject<TaskConfig>(File.ReadAllText(fileName));
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+            sw.Reset();
+            sw.Start();
             //taskConfig.InDates = null;
             //Helper.FileSerialize(taskConfig, @"D:\PR\buffer\taskConfig.bnr");
             //return;
 
-            PostWrapper postWrapper = new PostWrapper();
-            Dictionary<string, string> id2index = new Dictionary<string, string>();
-            Dictionary<string, PostObject> id2poj = new Dictionary<string, PostObject>();
+            PostWrapper postWrapper = new PostWrapper(taskConfig);
             Dictionary<long, (string start_id, string end_id, double time, double distance)> bones = new Dictionary<long, (string start_id, string end_id, double time, double distance)>();
-            foreach (var poj in taskConfig.PostObjects)
-            {
-                id2index.Add(poj.Id, poj.Index);
-                id2poj.Add(poj.Id, poj);
-            }
+
 
             //Graph gr = new Graph(taskConfig, id2index, id2poj);
             //File.WriteAllBytes("post-zone-a-and-b_v2.xml", Helper.SerializeXML(gr));
@@ -43,22 +41,7 @@ namespace PostRunner
 
             foreach (var poj in taskConfig.PostObjects)
             {
-                postWrapper.AddSortingCenter(poj.Index);
-                foreach(var gate in poj.Gates)
-                {
-                    postWrapper.CreateGate(poj.Index, id2index[gate]);
-                }
-                foreach (var rules in poj.Route)
-                {
-                    string msgType = rules.Key;
-                    foreach (var route in rules.Value)
-                    {
-                        if (route.Value is null)
-                            postWrapper.AddRoute(poj.Index, id2index[route.Key], null, msgType);
-                        else 
-                            postWrapper.AddRoute(poj.Index, id2index[route.Key], id2index[route.Value], msgType);
-                    }
-                }
+                postWrapper.AddSortingCenter(poj.Index, poj);
             }
 
             foreach (var bone in taskConfig.TransportBones)
@@ -67,15 +50,17 @@ namespace PostRunner
                           (bone.Start_id, bone.End_id, bone.Time, bone.Distance));
             }
 
+            Random rnd = new Random(DateTime.Now.Millisecond);
             foreach(var tr in taskConfig.TransportRoutes)
             {
                 Dictionary<long, (string postUid, TransportAction tAction)> shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
+                int random_part = +24;// rnd.Next(-10, 10);
                 foreach (var sh in tr.Shedule)
                 {
                     var number = int.Parse(sh.Key);
                     var bone = bones[sh.Value];
-                    shedule.Add((long)((tr.StartTime + number - 1) * TimeSpan.TicksPerHour + tr.Id * 100 + number), (id2index[bone.start_id], TransportAction.Both));
-                    shedule.Add((long)((tr.StartTime + number) * TimeSpan.TicksPerHour + tr.Id * 150 + number), (id2index[bone.end_id], TransportAction.Both));
+                    shedule.Add((long)((tr.StartTime + number - 1 + random_part) * TimeSpan.TicksPerHour + tr.Id * 100 + number), (postWrapper.id2index[bone.start_id], TransportAction.Both));
+                    shedule.Add((long)((tr.StartTime + number + random_part) * TimeSpan.TicksPerHour + tr.Id * 150 + number), (postWrapper.id2index[bone.end_id], TransportAction.Both));
                 }
                 postWrapper.AddPostTransport(shedule);
             }
@@ -83,7 +68,7 @@ namespace PostRunner
 
 
 
-            int dayNumber = 3;
+            int dayNumber = 30;
             postWrapper.isDebug = true;
             Console.WriteLine("Start!");
 
@@ -98,12 +83,52 @@ namespace PostRunner
             postWrapper.writeError = errorFile.WriteLine;
             while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(dayNumber))
             {
-            }
+            }   
             sw.Stop();
             Console.WriteLine(sw.Elapsed);
             outputFile.Close();
             errorFile.Close();
-            File.WriteAllBytes("POST-Messages-Log-700K-Alt.xml", Helper.SerializeXML(postWrapper.messages));
+
+            int created = 0;
+            int local = 0;
+            int load = 0;
+            int unload = 0;
+            int undelivered = 0;
+            int noRouter = 0;
+            int inTime = 0;
+            foreach (var msg in postWrapper.messages)
+            {
+                foreach(var m in msg.log)
+                {
+                    if (m.Action == "Created")
+                        created++;
+                    if (m.Action == "Local")
+                    {
+                        local++;
+                        if (m.ActionTime.TotalHours < msg.ks)
+                            inTime++;
+                    }
+                    if (m.Action == "LoadOnTransport")
+                        load++;
+                    if (m.Action == "UnloadFromTransport")
+                        unload++;
+                    if (m.Action == "Undelivered")
+                        undelivered++;
+                    if (m.Action == "NoRouterFound")
+                        noRouter++;
+                }
+            }
+
+            Console.WriteLine($"Created     : {created}");
+            Console.WriteLine($"Local       : {local}");
+            Console.WriteLine($"InTime      : {inTime}");
+            Console.WriteLine($"Load        : {load}");
+            Console.WriteLine($"Unload      : {unload}");
+            Console.WriteLine($"Undelivered : {undelivered}");
+            Console.WriteLine($"NoRouter    : {noRouter}");
+            Console.WriteLine($"Controll    : {created-local-(load-unload)-undelivered-noRouter}");
+
+            //File.WriteAllBytes("POST-Messages-Log-700K.xml", Helper.SerializeXML(postWrapper.messages));
         }
     }
 }

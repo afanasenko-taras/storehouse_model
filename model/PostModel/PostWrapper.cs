@@ -1,6 +1,7 @@
 ﻿using AbstractModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace PostModel
@@ -9,14 +10,28 @@ namespace PostModel
     {
         public List<Message> messages = new List<Message>();
         TimeSpan lastAdd = TimeSpan.Zero;
+        DateTime startModelTime = DateTime.Parse("01/01/2024", new CultureInfo("en-US", true));
+        public Dictionary<string, string> id2index = new Dictionary<string, string>();
+        public Dictionary<string, PostObject> id2poj = new Dictionary<string, PostObject>();
+
+
+        public PostWrapper(TaskConfig taskConfig)
+        {
+            foreach (var poj in taskConfig.PostObjects)
+            {
+                id2index.Add(poj.Id, poj.Index);
+                id2poj.Add(poj.Id, poj);
+            }
+        }
+
         public void AddPostOffice(string uid)
         {
             lastAdd = AddEvent(lastAdd, new PostOfficeCreate(uid));
         }
 
-        public void AddSortingCenter(string uid)
+        public void AddSortingCenter(string uid, PostObject poj)
         {
-            lastAdd = AddEvent(lastAdd, new SortingCenterCreate(uid));
+            lastAdd = AddEvent(lastAdd, new SortingCenterCreate(uid, poj));
         }
 
         public void CreateGate(string sortingCenterUid, string gateUid)

@@ -27,7 +27,7 @@ namespace PostModel
                 if (data.WeightResult == 0)
                     continue;
                 string typeMsg = data.TypeMessageId;
-                Message msg = new Message(data.StartIndex, data.EndIndex, typeMsg, data.GroupPrediction, in_teraplan);
+                Message msg = new Message(data.StartIndex, data.EndIndex, typeMsg, data.Ks, data.GroupPrediction, in_teraplan);
                 msg.log.Add(new MessageLog(timeSpan, data.StartIndex, "", "Created"));
                 pw.messages.Add(msg);
                 su[data.StartIndex].inLine.Enqueue((TimeSpan.FromSeconds(10), msg));

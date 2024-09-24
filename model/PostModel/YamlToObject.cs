@@ -117,7 +117,7 @@ namespace PostModel
         public string Id { get; set; }
 
         [JsonProperty("ks")]
-        public long Ks { get; set; }
+        public int Ks { get; set; }
 
         [JsonProperty("start_index")]
         public string StartIndex { get; set; }

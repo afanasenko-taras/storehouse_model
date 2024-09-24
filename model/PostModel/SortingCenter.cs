@@ -9,7 +9,8 @@ namespace PostModel
     {
 
         public Queue<(TimeSpan exitTime, Message message)> inLine = new Queue<(TimeSpan exitTime, Message message)>();
-        internal FastAbstractWrapper wrapper;
+        internal PostWrapper wrapper;
+        public PostObject poj;
 
         public override (TimeSpan, FastAbstractEvent) getNearestEvent()
         {

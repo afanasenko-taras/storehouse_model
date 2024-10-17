@@ -44,6 +44,13 @@ namespace AbstractModel
                 writeDebug(debug);
         }
 
+        public void RemoveObjects(string uid)
+        {
+            objects.Remove(uid);
+            objectsEventTime.Remove(uid);
+            objectsKeyForUpdate.Remove(uid);
+        }
+
         public List<string> getObjectKeys()
         {
             return objects.Keys.ToList();

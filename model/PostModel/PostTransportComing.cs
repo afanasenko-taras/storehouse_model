@@ -22,26 +22,30 @@ namespace PostModel
             PostCenter postCenter = (PostCenter)wrapper.getObject(postAction.postUid);
             wrapper.WriteDebug($"Transport {postTransport.uid} is comming to {postAction.postUid} at {timeSpan} for {postAction.tAction}");
             PostWrapper pw = (PostWrapper)wrapper;
+            var action = postTransport.actions.Dequeue();
+            if (action.postUid!=postAction.postUid || action.tAction!=postAction.tAction)
+            {
+                Console.WriteLine("Alarm!!!");
+                Console.ReadLine();
+            }
             //Need load from all gates for transport with shedule
             if (postAction.tAction == TransportAction.Load || postAction.tAction == TransportAction.Both)
             {
-                foreach (var shedule in postTransport.shedule)
+                foreach (var shedule in postTransport.actions)
                 {
-                    if (shedule.Key <= postTransport.lastUpdated.Hours)
-                        continue;
-                    if (shedule.Value.tAction == TransportAction.Unload || shedule.Value.tAction == TransportAction.Both)
+                    if (shedule.tAction == TransportAction.Unload || shedule.tAction == TransportAction.Both)
                     {
-                        if (!postCenter.gates.ContainsKey(shedule.Value.postUid))
+                        if (!postCenter.gates.ContainsKey(shedule.postUid))
                             continue;
-                        if (postCenter.gates[shedule.Value.postUid].Count == 0)
+                        if (postCenter.gates[shedule.postUid].Count == 0)
                             continue;
-                        if (!postTransport.messageOnBoard.ContainsKey(shedule.Value.postUid))
-                            postTransport.messageOnBoard.Add(shedule.Value.postUid, new List<Message>());
+                        if (!postTransport.messageOnBoard.ContainsKey(shedule.postUid))
+                            postTransport.messageOnBoard.Add(shedule.postUid, new List<Message>());
 
-                        wrapper.WriteDebug($"Transport {postTransport.uid} get at {postCenter.lastUpdated} from {postCenter.uid} to {shedule.Value.postUid} messeges count {postCenter.gates[shedule.Value.postUid].Count}");
-                        postTransport.messageOnBoard[shedule.Value.postUid].AddRange(postCenter.gates[shedule.Value.postUid]);
-                        pw.MessageLogTransport(postCenter.gates[shedule.Value.postUid], timeSpan, postCenter.uid, postTransport.uid, "LoadOnTransport");
-                        postCenter.gates[shedule.Value.postUid] = new List<Message>();
+                        wrapper.WriteDebug($"Transport {postTransport.uid} get at {postCenter.lastUpdated} from {postCenter.uid} to {shedule.postUid} messeges count {postCenter.gates[shedule.postUid].Count}");
+                        postTransport.messageOnBoard[shedule.postUid].AddRange(postCenter.gates[shedule.postUid]);
+                        pw.MessageLogTransport(postCenter.gates[shedule.postUid], timeSpan, postCenter.uid, postTransport.uid, "LoadOnTransport");
+                        postCenter.gates[shedule.postUid] = new List<Message>();
                         
                     }
                 }

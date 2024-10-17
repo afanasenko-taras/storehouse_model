@@ -13,7 +13,7 @@ namespace PostModel
         DateTime startModelTime = DateTime.Parse("01/01/2024", new CultureInfo("en-US", true));
         public Dictionary<string, string> id2index = new Dictionary<string, string>();
         public Dictionary<string, PostObject> id2poj = new Dictionary<string, PostObject>();
-
+        public bool isFinished = false;
 
         public PostWrapper(TaskConfig taskConfig)
         {
@@ -49,11 +49,6 @@ namespace PostModel
             AddEvent(timeSpan, new AddMessage(message));
         }
 
-        public void AddPostTransport(Dictionary<long, (string postUid, TransportAction tAction)> shedule)
-        {
-            lastAdd = AddEvent(lastAdd, new PostTransportCreate(shedule));
-        }
-
         public void GenerateTestMessages(int dayNumber, int mailNumber)
         {
             lastAdd = AddEvent(lastAdd, new GenerateTestMessages(dayNumber, mailNumber));
@@ -86,6 +81,11 @@ namespace PostModel
             {
                 msg.log.Add(new MessageLog(timeSpan, post_uid, transport_uid, action));
             }
+        }
+
+        public void PostSedulesCreate(List<Dictionary<long, (string postUid, TransportAction tAction)>> shedules)
+        {
+            lastAdd = AddEvent(lastAdd, new PostShedulesCreate(shedules));
         }
 
         internal void MessageLogPost(List<Message> messages, TimeSpan timeSpan, string post_uid, string action)

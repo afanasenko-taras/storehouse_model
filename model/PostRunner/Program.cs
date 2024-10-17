@@ -51,10 +51,11 @@ namespace PostRunner
             }
 
             Random rnd = new Random(DateTime.Now.Millisecond);
-            foreach(var tr in taskConfig.TransportRoutes)
+            List<Dictionary<long, (string postUid, TransportAction tAction)>> shedules = new List<Dictionary<long, (string postUid, TransportAction tAction)>>();
+            foreach (var tr in taskConfig.TransportRoutes)
             {
                 Dictionary<long, (string postUid, TransportAction tAction)> shedule = new Dictionary<long, (string postUid, TransportAction tAction)>();
-                int random_part = +24;// rnd.Next(-10, 10);
+                int random_part = rnd.Next(-11,11);
                 foreach (var sh in tr.Shedule)
                 {
                     var number = int.Parse(sh.Key);
@@ -62,8 +63,9 @@ namespace PostRunner
                     shedule.Add((long)((tr.StartTime + number - 1 + random_part) * TimeSpan.TicksPerHour + tr.Id * 100 + number), (postWrapper.id2index[bone.start_id], TransportAction.Both));
                     shedule.Add((long)((tr.StartTime + number + random_part) * TimeSpan.TicksPerHour + tr.Id * 150 + number), (postWrapper.id2index[bone.end_id], TransportAction.Both));
                 }
-                postWrapper.AddPostTransport(shedule);
+                shedules.Add(shedule);
             }
+            postWrapper.PostSedulesCreate(shedules);
 
 
 
@@ -75,7 +77,7 @@ namespace PostRunner
             //postWrapper.GenerateFullMessages(taskConfig, inData);
             postWrapper.GenerateTeraplan(taskConfig);
             postWrapper.ForceUpdate(TimeSpan.FromHours(8));
-            postWrapper.ForceFinish(TimeSpan.FromDays(dayNumber-1)+ TimeSpan.FromHours(23));
+            postWrapper.ForceFinish(TimeSpan.FromDays(dayNumber-1)+TimeSpan.FromHours(23));
 
             StreamWriter outputFile = new StreamWriter("POST-DES.log");
             StreamWriter errorFile = new StreamWriter("router_test.csv");
@@ -83,6 +85,8 @@ namespace PostRunner
             postWrapper.writeError = errorFile.WriteLine;
             while (postWrapper.Next() & postWrapper.updatedTime < TimeSpan.FromDays(dayNumber))
             {
+                if (postWrapper.isFinished)
+                    break;
             }   
             sw.Stop();
             Console.WriteLine(sw.Elapsed);
@@ -94,8 +98,11 @@ namespace PostRunner
             int load = 0;
             int unload = 0;
             int undelivered = 0;
+            int unsorted = 0;
             int noRouter = 0;
             int inTime = 0;
+
+            SortedDictionary<int, int> ksDiff = new SortedDictionary<int, int>();
             foreach (var msg in postWrapper.messages)
             {
                 foreach(var m in msg.log)
@@ -107,12 +114,18 @@ namespace PostRunner
                         local++;
                         if (m.ActionTime.TotalHours < msg.ks)
                             inTime++;
+                        int diff = (int)m.ActionTime.TotalHours - msg.ks;
+                        if (!ksDiff.ContainsKey(diff))
+                            ksDiff.Add(diff, 0);
+                        ksDiff[diff]++;
                     }
                     if (m.Action == "LoadOnTransport")
                         load++;
                     if (m.Action == "UnloadFromTransport")
                         unload++;
                     if (m.Action == "Undelivered")
+                        undelivered++;
+                    if (m.Action == "Unsorted")
                         undelivered++;
                     if (m.Action == "NoRouterFound")
                         noRouter++;
@@ -125,8 +138,15 @@ namespace PostRunner
             Console.WriteLine($"Load        : {load}");
             Console.WriteLine($"Unload      : {unload}");
             Console.WriteLine($"Undelivered : {undelivered}");
+            Console.WriteLine($"Unsorted    : {unsorted}");
             Console.WriteLine($"NoRouter    : {noRouter}");
-            Console.WriteLine($"Controll    : {created-local-(load-unload)-undelivered-noRouter}");
+            Console.WriteLine($"Controll    : {created-local-(load-unload)-undelivered-unsorted-noRouter}");
+
+            StreamWriter ksFile = new StreamWriter("ks.csv");
+            foreach (var diff in ksDiff.Keys)
+                ksFile.WriteLine($"{diff},{ksDiff[diff]}");
+            ksFile.Close();
+
 
             //File.WriteAllBytes("POST-Messages-Log-700K.xml", Helper.SerializeXML(postWrapper.messages));
         }

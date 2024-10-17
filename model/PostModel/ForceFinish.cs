@@ -1,7 +1,5 @@
 ﻿using AbstractModel;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PostModel
 {
@@ -22,8 +20,13 @@ namespace PostModel
                             msg.log.Add(new MessageLog(timeSpan, sc.uid, "", "Undelivered"));
                         }
                     }
+                    foreach (var msg in sc.inLine)
+                    {
+                        msg.message.log.Add(new MessageLog(timeSpan, sc.uid, "", "Unsorted"));
+                    }
                 }
             }
+            ((PostWrapper)wrapper).isFinished = true;
             Console.WriteLine("ForceFinish!");
         }
     }
